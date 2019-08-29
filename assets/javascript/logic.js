@@ -25,13 +25,11 @@ function ticketMaster(e) {
         async: true,
         dataType: "json",
         success: function (data) {
-            console.log(data._embedded.events[0].name);
             var tm = data._embedded.events;
             $("#table-body").empty();
-            for (var i = 0; i < 11; i++) {
+            for (var i = 0; i < tm.length; i++) {
                 $("#table-body").append("<tr>" + "<td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
-                 + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success'>More Info</button></td></tr>");
-                console.log(tm[i].name);
+                 + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success' data-toggle='modal' data-target='exampleModal' id=" + tm[i].id + ">More Info</button></td></tr>");
             }
         },
         error: function (xhr, status, err) {
@@ -39,7 +37,38 @@ function ticketMaster(e) {
     });
     e.preventDefault();
 }
+function ticketMasterModal(e){
+    var id = $(this).attr('id');
+    console.log(id);
+    $.ajax({
+        type: "GET",
+        url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&id=" + id,
+        async: true,
+        dataType: "json",
+        success: function (data) {
+            var tm = data._embedded.events[0];
+            $(".modal-body").empty();
+            var modalImage = $("<img><br>")
+            modalImage.attr("src", tm.images[1].url);
+            modalImage.attr("height", "200px");
+            modalVenue = $("<h5 style='text-align:center'>");
+            modalVenue.text(tm._embedded.venues[0].name);
+            $(".modal-body").append(modalImage);
+            $(".modal-body").append(modalVenue);
+            console.log(tm.url);
+            //Trying to add link to Buy tickets
+            //$(".modal-body").append(modalDescription);
+            $("#exampleModalLabel").text(tm.name);
+            $("#exampleModal").modal();
+        },
+        error: function (xhr, status, err) {
+        }
+    });
+    e.preventDefault();
+
+}
 $("#tm-button").on("click", ticketMaster);
+$(document).on("click", ".btn-success", ticketMasterModal);
 
 
 
