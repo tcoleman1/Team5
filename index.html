@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,64 +14,66 @@
 </head>
 
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="jumbotron">
-          <h1 class="display-4" style="text-align: center">VacaBuddy</h1>
-          <p class="lead" style="text-align: center">Providing all of your vacation essentials</p>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-          <div class="card">
-              <div class="card-header">
-                Vacation Info
-              </div>
-              <div class="card-body">
-                <form role="form">
-                  <div class="form-group">
-                    <label for="leaving-input">Leaving From</label>
-                    <input class="form-control" id="leaving-input" type="text">
-                  </div>
-                  <div class="form-group">
-                    <label for="destination-input">Destination</label>
-                    <input class="form-control" id="destination-input" type="text">
-                  </div>
-                  <div class="form-group">
-                        <label for="departure-date-input">Departure Date</label>
-                        <input class="form-control" id="depart-input" type="date">
-                      </div>
-                  <div class="form-group">
-                    <label for="return-date-input">Return Date</label>
-                    <input class="form-control" id="return-date-input" type="date">
-                  </div>
-                  <button class="btn btn-info" id="submit-button" >Submit</button>
-                  <button class="btn btn-info" id="tm-button">Ticket Master</button>
-                </form>
-              </div>
-            </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-          <table class="table" id="ticket-master">
-              <thead>
-                  <tr>
-                      <th scope="col">Event Name</th>
-                      <th scope="col">Date</th>
-                      <th scope='col'>Time</th>
-                      <th scopt='col'></th>
-                  </tr>
-              </thead>
-              <tbody id="table-body">
-              </tbody>
-          </table>
-
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="jumbotron">
+        <h1 class="display-4" style="text-align: center">VacaBuddy</h1>
+        <p class="lead" style="text-align: center">Providing all of your vacation essentials</p>
       </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          Vacation Info
+        </div>
+        <div class="card-body">
+          <form role="form">
+            <div class="form-group">
+              <label for="leaving-input">Leaving From</label>
+              <input class="form-control" id="leaving-input" type="text">
+            </div>
+            <div class="form-group">
+              <label for="destination-input">Destination</label>
+              <input class="form-control" id="destination-input" type="text">
+            </div>
+            <div class="form-group">
+              <label for="departure-date-input">Departure Date</label>
+              <input class="form-control" id="depart-input" type="date">
+            </div>
+            <div class="form-group">
+              <label for="return-date-input">Return Date</label>
+              <input class="form-control" id="return-date-input" type="date">
+            </div>
+            <button class="btn btn-info" id="submit-button">Submit</button>
+            <button class="btn btn-info" id="tm-button">Ticket Master</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <table class="table" id="ticket-master">
+        <thead>
+          <tr>
+            <th scope="col">Event Name</th>
+            <th scope="col">Date</th>
+            <th scope='col'>Time</th>
+            <th scopt='col'></th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+        </tbody>
+      </table>
+
+
+    </div>
+  </div>
+</div>
 <script src="assets/javascript/logic.js"></script>
 </body>
+
 </html>
