@@ -21,11 +21,13 @@ function ticketMaster(e) {
     $.ajax({
         type: "GET",
         url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&city="
-         + city + "&startDateTime=" + startDate + "T00:00:00Z&endDateTime=" + endDate + "T00:00:00Z",
+         + city + "&startDateTime=" + startDate + "T00:00:00Z&endDateTime=" + endDate + "T00:00:00Z",//need to change to 11:59:59Z
         async: true,
         dataType: "json",
         success: function (data) {
             var tm = data._embedded.events;
+            $("#table-head").empty();
+            $("#table-head").append("<th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th>")
             $("#table-body").empty();
             for (var i = 0; i < tm.length; i++) {
                 $("#table-body").append("<tr>" + "<td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
