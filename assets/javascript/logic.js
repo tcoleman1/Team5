@@ -1,4 +1,5 @@
-
+var maplocation;
+var map;
 function zomatoGetCity(e) {
     var city = $("#destination-input").val().trim();
 
@@ -10,9 +11,28 @@ function zomatoGetCity(e) {
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
         success: function (data) {
-            console.log(data);
             var cityID = data.location_suggestions[0].id;
             zomatoGetRestaurants(cityID)
+        },
+        error: function (xhr, status, err) {
+        }
+    });
+    $.ajax({
+        type: "GET",
+        dataType: 'json',
+        url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
+        headers: {
+            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
+        },
+        success: function (data) {
+         var lat = data.location_suggestions[0].latitude;
+         var long = data.location_suggestions[0].longitude;
+         maplocation = [lat,long];
+         map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: maplocation[0], lng: maplocation[1]},
+            zoom: 12
+          });
+
         },
         error: function (xhr, status, err) {
         }
@@ -38,6 +58,12 @@ function zomatoGetRestaurants(a) {
             for (var i = 0; i < z.length; i++) {
                 $("#table-body").append("<tr>" + "<td>" + z[i].restaurant.name + "</td><td>" + z[i].restaurant.cuisines + "</td><td>"
                     + z[i].restaurant.user_rating.aggregate_rating + "</td><td><button type='button' class='btn btn-success zomato' data-toggle='modal' data-target='exampleModal' id=" + z[i].restaurant.id + ">More Info</button></td></tr>");
+                    var myLatLng = new google.maps.LatLng(z[i].restaurant.location.latitude, z[i].restaurant.location.longitude);
+                    var marker = new google.maps.Marker({
+                        position: myLatLng,
+                        map: map,
+                    });
+                
             }
         },
         error: function (xhr, status, err) {
@@ -91,9 +117,18 @@ function ticketMaster(e) {
             $("#table-head").empty();
             $("#table-head").append("<th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th>")
             $("#table-body").empty();
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: maplocation[0], lng: maplocation[1]},
+                zoom: 12
+              });
             for (var i = 0; i < tm.length; i++) {
                 $("#table-body").append("<tr>" + "<td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
                     + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id=" + tm[i].id + ">More Info</button></td></tr>");
+                    var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);
+                    var marker = new google.maps.Marker({
+                        position: myLatLng,
+                        map: map,
+                    });
             }
         },
         error: function (xhr, status, err) {
