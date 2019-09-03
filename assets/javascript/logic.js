@@ -1,5 +1,17 @@
 var maplocation;
 var map;
+var config = {
+    apiKey: "AIzaSyDYVNJ-Ggov5htghQ-BkNxOBcG3c6SfULU",
+    authDomain: "bootcamp-example-8f83a.firebaseapp.com",
+    databaseURL: "https://bootcamp-example-8f83a.firebaseio.com",
+    projectId: "bootcamp-example-8f83a",
+    storageBucket: "",
+    messagingSenderId: "570706840985",
+    appId: "1:570706840985:web:66af9a4c6d8e3d14"
+};
+firebase.initializeApp(config);
+var database = firebase.database();
+
 function zomatoGetCity(e) {
     var city = $("#destination-input").val().trim();
 
@@ -53,14 +65,17 @@ function zomatoGetRestaurants(a) {
             console.log(data);
              var z=data.restaurants;
             $("#table-head").empty();
-            $("#table-head").append("<th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'></th>");
+            $("#table-head").append("<th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'></th><th scope='col'></th>");
             $("#table-body").empty();
             for (var i = 0; i < z.length; i++) {
                 $("#table-body").append("<tr>" + "<td>" + z[i].restaurant.name + "</td><td>" + z[i].restaurant.cuisines + "</td><td>"
-                    + z[i].restaurant.user_rating.aggregate_rating + "</td><td><button type='button' class='btn btn-success zomato' data-toggle='modal' data-target='exampleModal' id=" + z[i].restaurant.id + ">More Info</button></td></tr>");
+                    + z[i].restaurant.user_rating.aggregate_rating + "</td><td><button type='button' class='btn btn-success zomato' data-toggle='modal' data-target='exampleModal' id="
+                     + z[i].restaurant.id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-zomato' id="
+                     + z[i].restaurant.id + ">Add To Favorites</button></td></tr>");
                     var myLatLng = new google.maps.LatLng(z[i].restaurant.location.latitude, z[i].restaurant.location.longitude);
                     var marker = new google.maps.Marker({
                         position: myLatLng,
+                        animation: google.maps.Animation.DROP,
                         map: map,
                     });
                 
@@ -68,6 +83,12 @@ function zomatoGetRestaurants(a) {
         },
         error: function (xhr, status, err) {
         }
+    });
+}
+function addFavRestaurant(){
+    var id =$(this).attr('id');
+    database.ref("/Restaurants/").push({
+        id : id
     });
 }
 function zomatoModal(e) {
@@ -115,7 +136,7 @@ function ticketMaster(e) {
         success: function (data) {
             var tm = data._embedded.events;
             $("#table-head").empty();
-            $("#table-head").append("<th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th>")
+            $("#table-head").append("<th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")
             $("#table-body").empty();
             map = new google.maps.Map(document.getElementById('map'), {
                 center: {lat: maplocation[0], lng: maplocation[1]},
@@ -123,9 +144,12 @@ function ticketMaster(e) {
               });
             for (var i = 0; i < tm.length; i++) {
                 $("#table-body").append("<tr>" + "<td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
-                    + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id=" + tm[i].id + ">More Info</button></td></tr>");
+                    + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
+                     + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
+                     + tm[i].id + ">Add To Favorites</button></td></tr>");
                     var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);
                     var marker = new google.maps.Marker({
+                        animation: google.maps.Animation.DROP,
                         position: myLatLng,
                         map: map,
                     });
@@ -135,6 +159,12 @@ function ticketMaster(e) {
         }
     });
     e.preventDefault();
+}
+function addFavEvent(){
+    var id =$(this).attr('id');
+    database.ref("/Events/").push({
+        id : id
+    });
 }
 function ticketMasterModal(e) {
     var id = $(this).attr('id');
@@ -170,6 +200,8 @@ $("#tm-button").on("click", ticketMaster);
 $("#restaurant-button").on("click", zomatoGetCity);
 $(document).on("click", ".ticket", ticketMasterModal);
 $(document).on("click", ".zomato", zomatoModal);
+$(document).on("click", ".fav-zomato", addFavRestaurant);
+$(document).on("click", ".fav-ticket", addFavEvent);
 
 
 
