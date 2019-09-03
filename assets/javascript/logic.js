@@ -122,8 +122,6 @@ function zomatoModal(e) {
     });
     e.preventDefault();
 }
-
-
 function ticketMaster(e) {
     var city = $("#destination-input").val().trim();
     var startDate = $("#depart-input").val();
@@ -249,9 +247,12 @@ function openBreweryDB(e) {
             $("#table-head").append("<th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
             $("#table-body").empty();
             for (var i = 0; i < ob.length; i++) {
+                var name = ob[i].name;
+                var urlName = name.split(' ').join('+');
+                console.log(urlName); 
                 $("#table-body").append("<tr>" + "<td>" + ob[i].name + "</td><td>" + ob[i].brewery_type + "</td><td>"
                     + ob[i].street + "</td><td><button type='button' class='btn btn-success brewery' data-toggle='modal' data-target='exampleModal' id="
-                    + ob[i].name + ">More Info</button></td></tr>");
+                    + urlName + ">More Info</button></td></tr>");
                 var myLatLng = new google.maps.LatLng(ob[i].latitude, ob[i].longitude);
                 var marker = new google.maps.Marker({
                     animation: google.maps.Animation.DROP,
