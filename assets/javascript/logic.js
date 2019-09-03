@@ -37,13 +37,13 @@ function zomatoGetCity(e) {
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
         success: function (data) {
-         var lat = data.location_suggestions[0].latitude;
-         var long = data.location_suggestions[0].longitude;
-         maplocation = [lat,long];
-         map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: maplocation[0], lng: maplocation[1]},
-            zoom: 12
-          });
+            var lat = data.location_suggestions[0].latitude;
+            var long = data.location_suggestions[0].longitude;
+            maplocation = [lat, long];
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: maplocation[0], lng: maplocation[1] },
+                zoom: 12
+            });
 
         },
         error: function (xhr, status, err) {
@@ -63,32 +63,32 @@ function zomatoGetRestaurants(a) {
         },
         success: function (data) {
             console.log(data);
-             var z=data.restaurants;
+            var z = data.restaurants;
             $("#table-head").empty();
             $("#table-head").append("<th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'></th><th scope='col'></th>");
             $("#table-body").empty();
             for (var i = 0; i < z.length; i++) {
                 $("#table-body").append("<tr>" + "<td>" + z[i].restaurant.name + "</td><td>" + z[i].restaurant.cuisines + "</td><td>"
                     + z[i].restaurant.user_rating.aggregate_rating + "</td><td><button type='button' class='btn btn-success zomato' data-toggle='modal' data-target='exampleModal' id="
-                     + z[i].restaurant.id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-zomato' id="
-                     + z[i].restaurant.id + ">Add To Favorites</button></td></tr>");
-                    var myLatLng = new google.maps.LatLng(z[i].restaurant.location.latitude, z[i].restaurant.location.longitude);
-                    var marker = new google.maps.Marker({
-                        position: myLatLng,
-                        animation: google.maps.Animation.DROP,
-                        map: map,
-                    });
-                
+                    + z[i].restaurant.id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-zomato' id="
+                    + z[i].restaurant.id + ">Add To Favorites</button></td></tr>");
+                var myLatLng = new google.maps.LatLng(z[i].restaurant.location.latitude, z[i].restaurant.location.longitude);
+                var marker = new google.maps.Marker({
+                    position: myLatLng,
+                    animation: google.maps.Animation.DROP,
+                    map: map,
+                });
+
             }
         },
         error: function (xhr, status, err) {
         }
     });
 }
-function addFavRestaurant(){
-    var id =$(this).attr('id');
+function addFavRestaurant() {
+    var id = $(this).attr('id');
     database.ref("/Restaurants/").push({
-        id : id
+        id: id
     });
 }
 function zomatoModal(e) {
@@ -97,7 +97,7 @@ function zomatoModal(e) {
     $.ajax({
         type: "GET",
         dataType: 'json',
-        url: "https://developers.zomato.com/api/v2.1/restaurant?res_id=" + id, 
+        url: "https://developers.zomato.com/api/v2.1/restaurant?res_id=" + id,
         headers: {
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
@@ -123,10 +123,33 @@ function zomatoModal(e) {
     e.preventDefault();
 }
 
+
 function ticketMaster(e) {
     var city = $("#destination-input").val().trim();
     var startDate = $("#depart-input").val();
     var endDate = $("#return-date-input").val();
+
+    $.ajax({
+        type: "GET",
+        async: false,
+        dataType: 'json',
+        url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
+        headers: {
+            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
+        },
+        success: function (data) {
+            var lat = data.location_suggestions[0].latitude;
+            var long = data.location_suggestions[0].longitude;
+            maplocation = [lat, long];
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: maplocation[0], lng: maplocation[1] },
+                zoom: 12
+            });
+
+        },
+        error: function (xhr, status, err) {
+        }
+    });
     $.ajax({
         type: "GET",
         url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&city="
@@ -138,21 +161,17 @@ function ticketMaster(e) {
             $("#table-head").empty();
             $("#table-head").append("<th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")
             $("#table-body").empty();
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: maplocation[0], lng: maplocation[1]},
-                zoom: 12
-              });
             for (var i = 0; i < tm.length; i++) {
                 $("#table-body").append("<tr>" + "<td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
                     + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
-                     + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
-                     + tm[i].id + ">Add To Favorites</button></td></tr>");
-                    var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);
-                    var marker = new google.maps.Marker({
-                        animation: google.maps.Animation.DROP,
-                        position: myLatLng,
-                        map: map,
-                    });
+                    + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
+                    + tm[i].id + ">Add To Favorites</button></td></tr>");
+                var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);
+                var marker = new google.maps.Marker({
+                    animation: google.maps.Animation.DROP,
+                    position: myLatLng,
+                    map: map,
+                });
             }
         },
         error: function (xhr, status, err) {
@@ -160,10 +179,10 @@ function ticketMaster(e) {
     });
     e.preventDefault();
 }
-function addFavEvent(){
-    var id =$(this).attr('id');
+function addFavEvent() {
+    var id = $(this).attr('id');
     database.ref("/Events/").push({
-        id : id
+        id: id
     });
 }
 function ticketMasterModal(e) {
