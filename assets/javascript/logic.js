@@ -251,8 +251,7 @@ function openBreweryDB(e) {
             for (var i = 0; i < ob.length; i++) {
                 $("#table-body").append("<tr>" + "<td>" + ob[i].name + "</td><td>" + ob[i].brewery_type + "</td><td>"
                     + ob[i].street + "</td><td><button type='button' class='btn btn-success brewery' data-toggle='modal' data-target='exampleModal' id="
-                    + ob[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-brewery' id="
-                    + ob[i].id + ">Add To Favorites</button></td></tr>");
+                    + ob[i].name + ">More Info</button></td></tr>");
                 var myLatLng = new google.maps.LatLng(ob[i].latitude, ob[i].longitude);
                 var marker = new google.maps.Marker({
                     animation: google.maps.Animation.DROP,
@@ -266,6 +265,49 @@ function openBreweryDB(e) {
     });
     e.preventDefault();
 }
+function getBrewID(e) {
+    var name = $(this).attr('id');
+    $.ajax({
+        type: "GET",
+        url: "https://api.untappd.com/v4/search/brewery?client_id=F1EED4739F6B586A4B45CDD1A7C031824655B6F6&client_secret=F42386C7B9B863163C04CE0CD470A82ED664A6CE&q=" + name ,//
+        async: false,
+        dataType: "json",
+        success: function (data) {
+             var id = data.response.brewery.items[0].brewery.brewery_id;
+             breweryModal(id);
+            
+        },
+        error: function (xhr, status, err) {
+        }
+    });
+    e.preventDefault();
+}
+function breweryModal(e) {
+    var id = e;
+    $.ajax({
+        type: "GET",
+        url: "https://api.untappd.com/v4/brewery/info/" + id + "?client_id=F1EED4739F6B586A4B45CDD1A7C031824655B6F6&client_secret=F42386C7B9B863163C04CE0CD470A82ED664A6CE",
+        async: true,
+        dataType: "json",
+        success: function (data) {
+            var untap = data.response.brewery;
+            $(".modal-body").empty();
+            var modalImage = $("<img><br>")
+            modalImage.attr("src", untap.brewery_label);
+            modalImage.attr("height", "300px");
+            $(".modal-body").append(modalImage);
+            modalDescription = $("<h5 style='text-align:center'>");
+            modalDescription.text(untap.brewery_description);
+            $(".modal-body").append(modalDescription);
+            $("#exampleModalLabel").text(untap.brewery_name);
+            $("#exampleModal").modal();
+
+
+        },
+        error: function (xhr, status, err) {
+        }
+    });
+}
 $("#tm-button").on("click", ticketMaster);
 $("#restaurant-button").on("click", zomatoGetCity);
 $("#ob-button").on("click", openBreweryDB);
@@ -273,6 +315,7 @@ $(document).on("click", ".ticket", ticketMasterModal);
 $(document).on("click", ".zomato", zomatoModal);
 $(document).on("click", ".fav-zomato", addFavRestaurant);
 $(document).on("click", ".fav-ticket", addFavEvent);
+$(document).on("click", ".brewery", getBrewID);
 
 
 
