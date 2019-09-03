@@ -215,8 +215,60 @@ function ticketMasterModal(e) {
     e.preventDefault();
 
 }
+function openBreweryDB(e) {
+    var city = $("#destination-input").val().trim();
+    $.ajax({
+        type: "GET",
+        async: false,
+        dataType: 'json',
+        url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
+        headers: {
+            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
+        },
+        success: function (data) {
+            var lat = data.location_suggestions[0].latitude;
+            var long = data.location_suggestions[0].longitude;
+            maplocation = [lat, long];
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: maplocation[0], lng: maplocation[1] },
+                zoom: 12
+            });
+
+        },
+        error: function (xhr, status, err) {
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "https://api.openbrewerydb.org/breweries?by_city=" + city +"&per_page=40",
+        async: true,
+        dataType: "json",
+        success: function (data) {
+            var ob = data;
+            $("#table-head").empty();
+            $("#table-head").append("<th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
+            $("#table-body").empty();
+            for (var i = 0; i < ob.length; i++) {
+                $("#table-body").append("<tr>" + "<td>" + ob[i].name + "</td><td>" + ob[i].brewery_type + "</td><td>"
+                    + ob[i].street + "</td><td><button type='button' class='btn btn-success brewery' data-toggle='modal' data-target='exampleModal' id="
+                    + ob[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-brewery' id="
+                    + ob[i].id + ">Add To Favorites</button></td></tr>");
+                var myLatLng = new google.maps.LatLng(ob[i].latitude, ob[i].longitude);
+                var marker = new google.maps.Marker({
+                    animation: google.maps.Animation.DROP,
+                    position: myLatLng,
+                    map: map,
+                });
+            }
+        },
+        error: function (xhr, status, err) {
+        }
+    });
+    e.preventDefault();
+}
 $("#tm-button").on("click", ticketMaster);
 $("#restaurant-button").on("click", zomatoGetCity);
+$("#ob-button").on("click", openBreweryDB);
 $(document).on("click", ".ticket", ticketMasterModal);
 $(document).on("click", ".zomato", zomatoModal);
 $(document).on("click", ".fav-zomato", addFavRestaurant);
