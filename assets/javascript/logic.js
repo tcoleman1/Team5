@@ -64,11 +64,13 @@ function zomatoGetRestaurants(a) {
         success: function (data) {
             console.log(data);
             var z = data.restaurants;
+            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            var labelIndex = 0;
             $("#table-head").empty();
-            $("#table-head").append("<th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'></th><th scope='col'></th>");
+            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'></th><th scope='col'></th>");
             $("#table-body").empty();
             for (var i = 0; i < z.length; i++) {
-                $("#table-body").append("<tr>" + "<td>" + z[i].restaurant.name + "</td><td>" + z[i].restaurant.cuisines + "</td><td>"
+                $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + z[i].restaurant.name + "</td><td>" + z[i].restaurant.cuisines + "</td><td>"
                     + z[i].restaurant.user_rating.aggregate_rating + "</td><td><button type='button' class='btn btn-success zomato' data-toggle='modal' data-target='exampleModal' id="
                     + z[i].restaurant.id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-zomato' id="
                     + z[i].restaurant.id + ">Add To Favorites</button></td></tr>");
@@ -76,6 +78,7 @@ function zomatoGetRestaurants(a) {
                 var marker = new google.maps.Marker({
                     position: myLatLng,
                     animation: google.maps.Animation.DROP,
+                    label: labels[labelIndex++ % labels.length],
                     map: map,
                 });
 
@@ -156,11 +159,13 @@ function ticketMaster(e) {
         dataType: "json",
         success: function (data) {
             var tm = data._embedded.events;
+            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            var labelIndex = 0;
             $("#table-head").empty();
-            $("#table-head").append("<th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")
+            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")
             $("#table-body").empty();
             for (var i = 0; i < tm.length; i++) {
-                $("#table-body").append("<tr>" + "<td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
+                $("#table-body").append("<tr>" +"<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
                     + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
                     + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
                     + tm[i].id + ">Add To Favorites</button></td></tr>");
@@ -168,6 +173,7 @@ function ticketMaster(e) {
                 var marker = new google.maps.Marker({
                     animation: google.maps.Animation.DROP,
                     position: myLatLng,
+                    label: labels[labelIndex++ % labels.length],
                     map: map,
                 });
             }
@@ -238,25 +244,28 @@ function openBreweryDB(e) {
     });
     $.ajax({
         type: "GET",
-        url: "https://api.openbrewerydb.org/breweries?by_city=" + city +"&per_page=40",
+        url: "https://api.openbrewerydb.org/breweries?by_city=" + city +"&per_page=26",
         async: true,
         dataType: "json",
         success: function (data) {
             var ob = data;
+            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            var labelIndex = 0;
             $("#table-head").empty();
-            $("#table-head").append("<th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
+            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
             $("#table-body").empty();
             for (var i = 0; i < ob.length; i++) {
                 var name = ob[i].name;
                 var urlName = name.split(' ').join('+');
                 console.log(urlName); 
-                $("#table-body").append("<tr>" + "<td>" + ob[i].name + "</td><td>" + ob[i].brewery_type + "</td><td>"
+                $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + ob[i].name + "</td><td>" + ob[i].brewery_type + "</td><td>"
                     + ob[i].street + "</td><td><button type='button' class='btn btn-success brewery' data-toggle='modal' data-target='exampleModal' id="
                     + urlName + ">More Info</button></td></tr>");
                 var myLatLng = new google.maps.LatLng(ob[i].latitude, ob[i].longitude);
                 var marker = new google.maps.Marker({
                     animation: google.maps.Animation.DROP,
                     position: myLatLng,
+                    label: labels[labelIndex++ % labels.length],
                     map: map,
                 });
             }
