@@ -1,6 +1,6 @@
-var maplocation;
-var map;
-var config = {
+var maplocation; // global variable to hold latitude and longitude for setting the map to selected city
+var map; //google map object
+var config = {//credentials for the firebase server
     apiKey: "AIzaSyDYVNJ-Ggov5htghQ-BkNxOBcG3c6SfULU",
     authDomain: "bootcamp-example-8f83a.firebaseapp.com",
     databaseURL: "https://bootcamp-example-8f83a.firebaseio.com",
@@ -9,27 +9,27 @@ var config = {
     messagingSenderId: "570706840985",
     appId: "1:570706840985:web:66af9a4c6d8e3d14"
 };
-firebase.initializeApp(config);
-var database = firebase.database();
+firebase.initializeApp(config);//initalializing the firebase server
+var database = firebase.database();//creating database object to add and make changes to the firebase server
 
-function zomatoGetCity(e) {
+function zomatoGetCity(e) {//function that querys the zomato api to search for the city from the users destination input and set the map location
     var city = $("#destination-input").val().trim();
 
-    $.ajax({
+    $.ajax({//the ajax call that will search the zomato api- this returns an array of relevant cities based on user input
         type: "GET",
         dataType: 'json',
         url: 'https://developers.zomato.com/api/v2.1/cities?q=' + city,
         headers: {
-            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
+            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557' //zomato api key
         },
         success: function (data) {
-            var cityID = data.location_suggestions[0].id;
-            zomatoGetRestaurants(cityID)
+            var cityID = data.location_suggestions[0].id;//this returns the id of the first suggested city from the zomato api (not foolproof but works pretty well)
+            zomatoGetRestaurants(cityID)//calls the zomatoGetRestaurants function passing the id captured in the ajax call
         },
         error: function (xhr, status, err) {
         }
     });
-    $.ajax({
+    $.ajax({//this ajax call sets the google map to be centered at the coordinates from the first suggested city, this can be refactored to be included in the first ajax call now that im reviewing it
         type: "GET",
         dataType: 'json',
         url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
@@ -52,7 +52,7 @@ function zomatoGetCity(e) {
     e.preventDefault();
 
 }
-function zomatoGetRestaurants(a) {
+function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity with the cityId that is captured in the city query search in the functon zomatoGetCity
     var id = a;
     $.ajax({
         type: "GET",
@@ -63,23 +63,23 @@ function zomatoGetRestaurants(a) {
         },
         success: function (data) {
             console.log(data);
-            var z = data.restaurants;
-            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            var labelIndex = 0;
-            $("#table-head").empty();
-            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'></th><th scope='col'></th>");
-            $("#table-body").empty();
-            for (var i = 0; i < z.length; i++) {
+            var z = data.restaurants;// this variable holds the json data from the first 20 trending restaurants in a given city from the ajax call
+            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//labels array to be displayed on entities in the google map
+            var labelIndex = 0;//counter variable that will loop through the labels array
+            $("#table-head").empty();//clearing all column titles from the html table 
+            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'></th><th scope='col'></th>");//creating the column headings for diplaying restaurants
+            $("#table-body").empty();//clearing the main contents of the table so that new information can be added
+            for (var i = 0; i < z.length; i++) {//each time this loop iterates a new table row will be created and appended with restaurant information captured from the api
                 $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + z[i].restaurant.name + "</td><td>" + z[i].restaurant.cuisines + "</td><td>"
                     + z[i].restaurant.user_rating.aggregate_rating + "</td><td><button type='button' class='btn btn-success zomato' data-toggle='modal' data-target='exampleModal' id="
                     + z[i].restaurant.id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-zomato' id="
                     + z[i].restaurant.id + ">Add To Favorites</button></td></tr>");
-                var myLatLng = new google.maps.LatLng(z[i].restaurant.location.latitude, z[i].restaurant.location.longitude);
-                var marker = new google.maps.Marker({
+                var myLatLng = new google.maps.LatLng(z[i].restaurant.location.latitude, z[i].restaurant.location.longitude);//this variable saves the lat and long of each restaurant fetched by the api call
+                var marker = new google.maps.Marker({//marker creates a new pinpoint on the google map for the given restauarant
                     position: myLatLng,
-                    animation: google.maps.Animation.DROP,
-                    label: labels[labelIndex++ % labels.length],
-                    map: map,
+                    animation: google.maps.Animation.DROP,//drop animation for each marker
+                    label: labels[labelIndex++ % labels.length],//this uses the labels array to help display and differentiate pinpoints on the google map
+                    map: map, // specifying the map that is targeted
                 });
 
             }
@@ -88,14 +88,14 @@ function zomatoGetRestaurants(a) {
         }
     });
 }
-function addFavRestaurant() {
+function addFavRestaurant() {//this function deals with adding a rstaurant id to the firebase server which can be called later to display the restaurants that have been favorited
     var id = $(this).attr('id');
     database.ref("/Restaurants/").push({
         id: id
     });
 }
-function zomatoModal(e) {
-    var id = $(this).attr('id');
+function zomatoModal(e) {//this function happens when then "more info" button is clicked and the pop up modal is displayed on the screen
+    var id = $(this).attr('id');//capturing the id of a given restaurant so that another ajax call can be made to get more specific details of that restaurant
     console.log(id);
     $.ajax({
         type: "GET",
@@ -106,19 +106,19 @@ function zomatoModal(e) {
         },
         success: function (data) {
             var z = data;
-            $(".modal-body").empty();
-            var modalImage = $("<img><br>")
-            modalImage.attr("src", z.featured_image);
-            modalImage.attr("height", "200px");
-            modalPhone = $("<h5 style='text-align:center'>");
+            $(".modal-body").empty();//clearing the data of the modal (state=hidden) that is coded in the html document
+            var modalImage = $("<img><br>")//this creates a variable that will hold an html image
+            modalImage.attr("src", z.featured_image);//setting the attribute of src to the image with the image url provided in the zomato api
+            modalImage.attr("height", "200px");//constricting the image to a height of 200px(can be changed when we swtich to the larger modal format)
+            modalPhone = $("<h5 style='text-align:center'>");//this creates an html <h5> text object that will be center aligned
             modalAddress = $("<h5 style='text-align:center'>");
-            modalAddress.text(z.location.address);
-            modalPhone.text(z.phone_numbers);
-            $(".modal-body").append(modalImage);
+            modalAddress.text(z.location.address);//setting the text of this html <h5> to include the address of the restaurant that is targeted by clicking "more info"
+            modalPhone.text(z.phone_numbers);// ^^ same as above but with phone number
+            $(".modal-body").append(modalImage);//these calls append the restaurant information gathered to the body of the pop up modal
             $(".modal-body").append(modalPhone);
             $(".modal-body").append(modalAddress);
-            $("#exampleModalLabel").text(z.name);
-            $("#exampleModal").modal();
+            $("#exampleModalLabel").text(z.name);//the modal label is equivalent to what the <title> of an html page is
+            $("#exampleModal").modal();//this command changes the modal from hidden to visible (makes it pop up)
         },
         error: function (xhr, status, err) {
         }
@@ -126,11 +126,11 @@ function zomatoModal(e) {
     e.preventDefault();
 }
 function ticketMaster(e) {
-    var city = $("#destination-input").val().trim();
+    var city = $("#destination-input").val().trim();//these calls grab the user input from the text inputs on the html page and saves them to local variables
     var startDate = $("#depart-input").val();
     var endDate = $("#return-date-input").val();
 
-    $.ajax({
+    $.ajax({// this function re draws the google map to centrally locate to the city that the user is searching for (can be refactored)
         type: "GET",
         async: false,
         dataType: 'json',
@@ -151,25 +151,25 @@ function ticketMaster(e) {
         error: function (xhr, status, err) {
         }
     });
-    $.ajax({
+    $.ajax({//This ajax call gets the users destination and timeframe in order to display all ticket master events that occur within the timeframe and location
         type: "GET",
         url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&city="
             + city + "&startDateTime=" + startDate + "T00:00:00Z&endDateTime=" + endDate + "T00:00:00Z",//need to change to 11:59:59Z
         async: true,
         dataType: "json",
         success: function (data) {
-            var tm = data._embedded.events;
-            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            var tm = data._embedded.events;//creating a variable to hold json data from the api call
+            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//google maps labels array and index below
             var labelIndex = 0;
-            $("#table-head").empty();
-            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")
-            $("#table-body").empty();
-            for (var i = 0; i < tm.length; i++) {
+            $("#table-head").empty();//Need to clear the table column headings so that they can be specified for ticketmaster
+            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")//creates the ticketmaster events column headings
+            $("#table-body").empty();//clearing the table body so that we can add rows of information specific to the ticket master events captured by the api
+            for (var i = 0; i < tm.length; i++) {//for loop similar to the zomatoGetRestaurants (see line 72)
                 $("#table-body").append("<tr>" +"<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
                     + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
                     + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
                     + tm[i].id + ">Add To Favorites</button></td></tr>");
-                var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);
+                var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);//same google maps calls(could be refactored)
                 var marker = new google.maps.Marker({
                     animation: google.maps.Animation.DROP,
                     position: myLatLng,
@@ -183,13 +183,13 @@ function ticketMaster(e) {
     });
     e.preventDefault();
 }
-function addFavEvent() {
+function addFavEvent() {//adding the ticket master event id's to the firebase server when the user clicks add to favorites
     var id = $(this).attr('id');
     database.ref("/Events/").push({
         id: id
     });
 }
-function ticketMasterModal(e) {
+function ticketMasterModal(e) {//this function works very similiarly to the zomatoModal function ( see zomatoModal(e) )--line 97
     var id = $(this).attr('id');
     console.log(id);
     $.ajax({
@@ -207,9 +207,6 @@ function ticketMasterModal(e) {
             modalVenue.text(tm._embedded.venues[0].name);
             $(".modal-body").append(modalImage);
             $(".modal-body").append(modalVenue);
-            console.log(tm.url);
-            //Trying to add link to Buy tickets
-            //$(".modal-body").append(modalDescription);
             $("#exampleModalLabel").text(tm.name);
             $("#exampleModal").modal();
         },
@@ -221,7 +218,7 @@ function ticketMasterModal(e) {
 }
 function openBreweryDB(e) {
     var city = $("#destination-input").val().trim();
-    $.ajax({
+    $.ajax({// the same zomato function that can be refactored - sets the map to the central location of the city - note to self:refactor
         type: "GET",
         async: false,
         dataType: 'json',
@@ -242,7 +239,7 @@ function openBreweryDB(e) {
         error: function (xhr, status, err) {
         }
     });
-    $.ajax({
+    $.ajax({// this ajax call uses the openbrewerydb database to search for breweries by city name- returns 26 results (no problems with a-z on map display, can display up to 50 at a time)
         type: "GET",
         url: "https://api.openbrewerydb.org/breweries?by_city=" + city +"&per_page=26",
         async: true,
@@ -251,18 +248,18 @@ function openBreweryDB(e) {
             var ob = data;
             var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             var labelIndex = 0;
-            $("#table-head").empty();
+            $("#table-head").empty();//Need to clear the table column headings so that they can be specified for breweriesa
             $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
             $("#table-body").empty();
             for (var i = 0; i < ob.length; i++) {
-                var name = ob[i].name;
-                var urlName = name.split(' ').join('+');
+                var name = ob[i].name;//this captures the name of each specific brewery in a given city
+                var urlName = name.split(' ').join('+');//this variable is needed for the getBrewId function and is saved as an id in a button that is created in each row of the table created below
                 console.log(urlName); 
                 $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + ob[i].name + "</td><td>" + ob[i].brewery_type + "</td><td>"
                     + ob[i].street + "</td><td><button type='button' class='btn btn-success brewery' data-toggle='modal' data-target='exampleModal' id="
                     + urlName + ">More Info</button></td></tr>");
-                var myLatLng = new google.maps.LatLng(ob[i].latitude, ob[i].longitude);
-                var marker = new google.maps.Marker({
+                var myLatLng = new google.maps.LatLng(ob[i].latitude, ob[i].longitude);//google maps coordinates
+                var marker = new google.maps.Marker({//google maps place of interest markers
                     animation: google.maps.Animation.DROP,
                     position: myLatLng,
                     label: labels[labelIndex++ % labels.length],
@@ -318,9 +315,11 @@ function breweryModal(e) {
         }
     });
 }
+//these are the event listeners that happen when each type of button is clicked on the DOM
 $("#tm-button").on("click", ticketMaster);
 $("#restaurant-button").on("click", zomatoGetCity);
 $("#ob-button").on("click", openBreweryDB);
+//These calls are formatted this way because these buttons are not loaded in the html document on start - they are dynamically created
 $(document).on("click", ".ticket", ticketMasterModal);
 $(document).on("click", ".zomato", zomatoModal);
 $(document).on("click", ".fav-zomato", addFavRestaurant);
