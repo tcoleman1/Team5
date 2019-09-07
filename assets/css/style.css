@@ -1,0 +1,10 @@
+body {
+    background-image: url(https://www.telegraph.co.uk/content/dam/Travel/galleries/travel/picturegalleries/The-worlds-best-city-skylines/skyline-toronto_3461626a.jpg);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    
+}
+
+.container {
+   background-color: darkgray; opacity: .8;
+}

@@ -101,13 +101,21 @@ function getZomatoReviews(a){ // this function will get called on click of the r
         },
                 success: function (data) {
                     var reviews = data.user_reviews;
-                    for (var i=0; i<5; i++){
-                    }
-                },
+                   
+
+
+
+                    $(".modal-body").append("<table class='table'><thead><tr id='review-list-head'></tr></thead><tbody id='review-list-body'></tbody></table>");
+           $("#review-list-head").append("<th scope='col'></th><th scope='col'>UserName</th><th scope='col'>Ratings</th><th scope='col'>Reviews</th>");
+           for(var i=0;i<reviews.length;i++){
+               $("#review-list-body").append("<tr><td><img src=" + reviews[i].review.user.profile_image  +  "</td><td>" + reviews[i].review.user.name + "</td>" + "<td>" + reviews[i].review.rating+ "</td><td>" + reviews[i].review.review_text +"</td><td>");
+           
+
+                }}
             
             });
-         
-}
+        }      
+
 
 function addFavRestaurant() {//this function deals with adding a rstaurant id to the firebase server which can be called later to display the restaurants that have been favorited
     var id = $(this).attr('id');
@@ -138,7 +146,11 @@ function zomatoModal(e) {//this function happens when then "more info" button is
             $(".modal-body").append(modalImage);//these calls append the restaurant information gathered to the body of the pop up modal
             $(".modal-body").append(modalPhone);
             $(".modal-body").append(modalAddress);
+<<<<<<< HEAD
             getZomatoReviews(id);
+=======
+            getZomatoReviews(id)
+>>>>>>> 87c80da799f439c12ab3c507ae793f5ff94c503f
             $("#exampleModalLabel").text(z.name);//the modal label is equivalent to what the <title> of an html page is
             $("#exampleModal").modal();//this command changes the modal from hidden to visible (makes it pop up)
         },
@@ -230,6 +242,10 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
             $(".modal-body").append(modalImage);
             $(".modal-body").append(modalVenue);
             $("#exampleModalLabel").text(tm.name);
+            $(".modal-footer").append("<button type='button' class='btn btn-primary ticket-button' ></button>")
+            $(".ticket-button").text("Buy Tickets");
+            $(".ticket-button").attr("id",tm.url);
+            console.log(tm.url);
             $("#exampleModal").modal();
         },
         error: function (xhr, status, err) {
@@ -354,6 +370,12 @@ $(document).on("click", ".zomato", zomatoModal);
 $(document).on("click", ".fav-zomato", addFavRestaurant);
 $(document).on("click", ".fav-ticket", addFavEvent);
 $(document).on("click", ".brewery", getBrewID);
+$(document).on("click",".ticket-button", function(){
+    console.log($(this).attr('id'));
+    var url = $(this).attr('id');
+    window.open(url);
+});
+
 
 
 
