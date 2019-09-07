@@ -90,24 +90,32 @@ function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity wit
 }
 
 
-// function getZomatoReviews(a){ // this function will get called on click of the review button to get restutant reviews using the ID that
-//     var resId = a;
-//     $.ajax({
-//         type: "GET",
-//         dataType: 'json',
-//         url: "https://developers.zomato.com/api/v2.1/reviews?res_id=" + resId,
-//         headers: {
-//             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
-//         },
-//                 success: function (data) {
-//                     var reviews = data.user_reviews;
-//                     for (var i=0; i<5; i++){
-//                     }
-//                 },
+function getZomatoReviews(a){ // this function will get called on click of the review button to get restutant reviews using the ID that
+    var resId = a;
+    $.ajax({
+        type: "GET",
+        dataType: 'json',
+        url: "https://developers.zomato.com/api/v2.1/reviews?res_id=" + resId,
+        headers: {
+            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
+        },
+                success: function (data) {
+                    var reviews = data.user_reviews;
+                   
+
+
+
+                    $(".modal-body").append("<table class='table'><thead><tr id='review-list-head'></tr></thead><tbody id='review-list-body'></tbody></table>");
+           $("#review-list-head").append("<th scope='col'></th><th scope='col'>UserName</th><th scope='col'>Ratings</th><th scope='col'>Reviews</th>");
+           for(var i=0;i<reviews.length;i++){
+               $("#review-list-body").append("<tr><td><img src=" + reviews[i].review.user.profile_image  +  "</td><td>" + reviews[i].review.user.name + "</td>" + "<td>" + reviews[i].review.rating+ "</td><td>" + reviews[i].review.review_text +"</td><td>");
+           
+
+                }}
             
-//             });
-         
-// }
+            });
+        }      
+
 
 function addFavRestaurant() {//this function deals with adding a rstaurant id to the firebase server which can be called later to display the restaurants that have been favorited
     var id = $(this).attr('id');
@@ -138,6 +146,7 @@ function zomatoModal(e) {//this function happens when then "more info" button is
             $(".modal-body").append(modalImage);//these calls append the restaurant information gathered to the body of the pop up modal
             $(".modal-body").append(modalPhone);
             $(".modal-body").append(modalAddress);
+            getZomatoReviews(id)
             $("#exampleModalLabel").text(z.name);//the modal label is equivalent to what the <title> of an html page is
             $("#exampleModal").modal();//this command changes the modal from hidden to visible (makes it pop up)
         },
