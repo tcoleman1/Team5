@@ -90,24 +90,24 @@ function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity wit
 }
 
 
-function getZomatoReviews(a){ // this function will get called on click of the review button to get restutant reviews using the ID that
-    var resId = a;
-    $.ajax({
-        type: "GET",
-        dataType: 'json',
-        url: "https://developers.zomato.com/api/v2.1/reviews?res_id=" + resId,
-        headers: {
-            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
-        },
-                success: function (data) {
-                    var reviews = data.user_reviews;
-                    for (var i=0; i<5; i++){
-                    }
-                },
+// function getZomatoReviews(a){ // this function will get called on click of the review button to get restutant reviews using the ID that
+//     var resId = a;
+//     $.ajax({
+//         type: "GET",
+//         dataType: 'json',
+//         url: "https://developers.zomato.com/api/v2.1/reviews?res_id=" + resId,
+//         headers: {
+//             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
+//         },
+//                 success: function (data) {
+//                     var reviews = data.user_reviews;
+//                     for (var i=0; i<5; i++){
+//                     }
+//                 },
             
-            });
+//             });
          
-}
+// }
 
 function addFavRestaurant() {//this function deals with adding a rstaurant id to the firebase server which can be called later to display the restaurants that have been favorited
     var id = $(this).attr('id');
