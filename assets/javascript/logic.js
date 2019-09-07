@@ -11,17 +11,18 @@ var config = {//credentials for the firebase server
 };
 firebase.initializeApp(config);//initalializing the firebase server
 var database = firebase.database();//creating database object to add and make changes to the firebase server
-$(document).ready(function() {
-    $("#restaurant-button").click(function() {
-      $(".form1").toggle();
+
+$(document).ready(function () {
+    $("#restaurant-button").click(function () {
+        $(".formCuisine").toggle();
     });
-    $("#tm-button").click(function(){
-        $(".form1").hide();
-      });
-      $("#ob-button").click(function(){
-        $(".form1").hide();
-      });
-  });
+    $("#tm-button").click(function () {
+        $(".formCuisine").hide();
+    });
+    $("#ob-button").click(function () {
+        $(".formCuisine").hide();
+    });
+});
 
 function zomatoGetCity(e) {//function that querys the zomato api to search for the city from the users destination input and set the map location
     var city = $("#destination-input").val().trim();
@@ -101,7 +102,7 @@ function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity wit
 }
 
 
-function getZomatoReviews(a){ // this function will get called on click of the review button to get restutant reviews using the ID that
+function getZomatoReviews(a) { // this function will get called on click of the review button to get restutant reviews using the ID that
     var resId = a;
     $.ajax({
         type: "GET",
@@ -110,14 +111,14 @@ function getZomatoReviews(a){ // this function will get called on click of the r
         headers: {
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
-                success: function (data) {
-                    var reviews = data.user_reviews;
-                    for (var i=0; i<5; i++){
-                    }
-                },
-            
-            });
-         
+        success: function (data) {
+            var reviews = data.user_reviews;
+            for (var i = 0; i < 5; i++) {
+            }
+        },
+
+    });
+
 }
 
 function addFavRestaurant() {//this function deals with adding a rstaurant id to the firebase server which can be called later to display the restaurants that have been favorited
@@ -197,7 +198,7 @@ function ticketMaster(e) {
             $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")//creates the ticketmaster events column headings
             $("#table-body").empty();//clearing the table body so that we can add rows of information specific to the ticket master events captured by the api
             for (var i = 0; i < tm.length; i++) {//for loop similar to the zomatoGetRestaurants (see line 72)
-                $("#table-body").append("<tr>" +"<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
+                $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
                     + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
                     + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
                     + tm[i].id + ">Add To Favorites</button></td></tr>");
@@ -273,7 +274,7 @@ function openBreweryDB(e) {
     });
     $.ajax({// this ajax call uses the openbrewerydb database to search for breweries by city name- returns 26 results (no problems with a-z on map display, can display up to 50 at a time)
         type: "GET",
-        url: "https://api.openbrewerydb.org/breweries?by_city=" + city +"&per_page=26",
+        url: "https://api.openbrewerydb.org/breweries?by_city=" + city + "&per_page=26",
         async: true,
         dataType: "json",
         success: function (data) {
@@ -286,7 +287,7 @@ function openBreweryDB(e) {
             for (var i = 0; i < ob.length; i++) {
                 var name = ob[i].name;//this captures the name of each specific brewery in a given city
                 var urlName = name.split(' ').join('+');//this variable is needed for the getBrewId function and is saved as an id in a button that is created in each row of the table created below
-                console.log(urlName); 
+                console.log(urlName);
                 $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + ob[i].name + "</td><td>" + ob[i].brewery_type + "</td><td>"
                     + ob[i].street + "</td><td><button type='button' class='btn btn-success brewery' data-toggle='modal' data-target='exampleModal' id="
                     + urlName + ">More Info</button></td></tr>");
@@ -308,13 +309,13 @@ function getBrewID(e) {
     var name = $(this).attr('id');
     $.ajax({
         type: "GET",
-        url: "https://api.untappd.com/v4/search/brewery?client_id=F1EED4739F6B586A4B45CDD1A7C031824655B6F6&client_secret=F42386C7B9B863163C04CE0CD470A82ED664A6CE&q=" + name ,//
+        url: "https://api.untappd.com/v4/search/brewery?client_id=F1EED4739F6B586A4B45CDD1A7C031824655B6F6&client_secret=F42386C7B9B863163C04CE0CD470A82ED664A6CE&q=" + name,//
         async: false,
         dataType: "json",
         success: function (data) {
-             var id = data.response.brewery.items[0].brewery.brewery_id;
-             breweryModal(id);
-            
+            var id = data.response.brewery.items[0].brewery.brewery_id;
+            breweryModal(id);
+
         },
         error: function (xhr, status, err) {
         }
@@ -340,9 +341,9 @@ function breweryModal(e) {
             $(".modal-body").append(modalDescription);
             $(".modal-body").append("<table class='table'><thead><tr id='beer-list-head'></tr></thead><tbody id='beer-list-body'></tbody></table>");
             $("#beer-list-head").append("<th scope='col'></th><th scope='col'>Beer Name</th><th scope='col'>Style</th><th scope='col'>Description</th>");
-            for(var i=0;i<untap.beer_list.items.length;i++){
-                $("#beer-list-body").append("<tr><td><img src=" + untap.beer_list.items[i].beer.beer_label + "></td><td>" + untap.beer_list.items[i].beer.beer_name + "</td><td>" + untap.beer_list.items[i].beer.beer_style +"</td><td>"
-                + untap.beer_list.items[i].beer.beer_description + "</td></tr>");
+            for (var i = 0; i < untap.beer_list.items.length; i++) {
+                $("#beer-list-body").append("<tr><td><img src=" + untap.beer_list.items[i].beer.beer_label + "></td><td>" + untap.beer_list.items[i].beer.beer_name + "</td><td>" + untap.beer_list.items[i].beer.beer_style + "</td><td>"
+                    + untap.beer_list.items[i].beer.beer_description + "</td></tr>");
             }
             $("#exampleModalLabel").text(untap.brewery_name);
             $("#exampleModal").modal();

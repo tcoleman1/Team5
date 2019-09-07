@@ -2,107 +2,109 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
-  <title>VacaBuddy</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
+    <title>VacaBuddy</title>
 </head>
 
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="jumbotron">
-        <h1 class="display-4" style="text-align: center">VacaBuddy</h1>
-        <p class="lead" style="text-align: center">Providing all of your vacation essentials</p>
-      </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="jumbotron">
+                <h1 class="display-4" style="text-align: center">VacaBuddy</h1>
+                <p class="lead" style="text-align: center">Providing all of your vacation essentials</p>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-header">
-          Vacation Info
-        </div>
-        <div class="card-body">
-          <form role="form">
+    <div class="formCuisine">
+        <form role="form" >
             <div class="form-group">
-              <label for="leaving-input">Leaving From</label>
-              <input class="form-control" id="leaving-input" type="text">
+                <label for="cuisine-input">Sort by Cuisine?</label>
+                <input class="form-control" id="cuisine-input" type="text">
             </div>
-            <div class="form-group">
-              <label for="destination-input">Destination</label>
-              <input class="form-control" id="destination-input" type="text">
-            </div>
-            <div class="form-group">
-              <label for="departure-date-input">Departure Date</label>
-              <input class="form-control" id="depart-input" type="date">
-            </div>
-            <div class="form-group">
-              <label for="return-date-input">Return Date</label>
-              <input class="form-control" id="return-date-input" type="date">
-            </div>
-            <button class="btn btn-info" id="restaurant-button">Restaurants</button>
-            <button class="btn btn-info" id="tm-button">Events</button>
-            <button class="btn btn-info" id="ob-button">Breweries</button>
-          </form>
-        </div>
-      </div>
+            <button class="btn btn-info" id="submit-button">Add Cuisine</button>
+        </form>
     </div>
-    <div class="col-md-8" id="map"></div>
-  </div class="form1">
-    <form role="form" id="form1">
-        <div class="form-group">
-            <label for="cuisine-input">Sort by Cuisine?</label>
-            <input class="form-control" id="cuisine-input" type="text">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Vacation Info
+                </div>
+                <div class="card-body">
+                    <form role="form">
+                        <div class="form-group">
+                            <label for="leaving-input">Leaving From</label>
+                            <input class="form-control" id="leaving-input" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="destination-input">Destination</label>
+                            <input class="form-control" id="destination-input" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="departure-date-input">Departure Date</label>
+                            <input class="form-control" id="depart-input" type="date">
+                        </div>
+                        <div class="form-group">
+                            <label for="return-date-input">Return Date</label>
+                            <input class="form-control" id="return-date-input" type="date">
+                        </div>
+                        <button class="btn btn-info" id="restaurant-button">Restaurants</button>
+                        <button class="btn btn-info" id="tm-button">Events</button>
+                        <button class="btn btn-info" id="ob-button">Breweries</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <button class="btn btn-info" id="submit-button">Add Cuisine</button>
-    </form>
-  </div>
+        <div class="col-md-8" id="map"></div>
+        
+    </div>
+    
 </div>
 
-  </div>
-  <div class="row">
+<div class="row">
     <div class="col-md-12">
-      <table class="table">
-        <thead>
-          <tr id="table-head">
-          </tr>
-        </thead>
-        <tbody id="table-body">
-        </tbody>
-      </table>
+        <table class="table">
+            <thead>
+                <tr id="table-head">
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
     </div>
-  </div>
-  <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+</div>
+<div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"></h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" id="reviews-button">Reviews</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary" id="reviews-button">Reviews</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 </div>
 <script src="assets/javascript/logic.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDRWeRjEqaUFI386Hu3gRTAfoslJzNv98&callback=initMap" async
-  defer></script>
+    defer></script>
 </body>
 
 </html>
-
