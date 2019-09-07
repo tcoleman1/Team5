@@ -11,6 +11,17 @@ var config = {//credentials for the firebase server
 };
 firebase.initializeApp(config);//initalializing the firebase server
 var database = firebase.database();//creating database object to add and make changes to the firebase server
+$(document).ready(function() {
+    $("#restaurant-button").click(function() {
+      $(".form1").toggle();
+    });
+    $("#tm-button").click(function(){
+        $(".form1").hide();
+      });
+      $("#ob-button").click(function(){
+        $(".form1").hide();
+      });
+  });
 
 function zomatoGetCity(e) {//function that querys the zomato api to search for the city from the users destination input and set the map location
     var city = $("#destination-input").val().trim();
