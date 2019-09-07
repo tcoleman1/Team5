@@ -138,6 +138,7 @@ function zomatoModal(e) {//this function happens when then "more info" button is
             $(".modal-body").append(modalImage);//these calls append the restaurant information gathered to the body of the pop up modal
             $(".modal-body").append(modalPhone);
             $(".modal-body").append(modalAddress);
+            getZomatoReviews(id);
             $("#exampleModalLabel").text(z.name);//the modal label is equivalent to what the <title> of an html page is
             $("#exampleModal").modal();//this command changes the modal from hidden to visible (makes it pop up)
         },
