@@ -327,6 +327,12 @@ function breweryModal(e) {
             modalDescription = $("<h5 style='text-align:center'>");
             modalDescription.text(untap.brewery_description);
             $(".modal-body").append(modalDescription);
+            $(".modal-body").append("<table class='table'><thead><tr id='beer-list-head'></tr></thead><tbody id='beer-list-body'></tbody></table>");
+            $("#beer-list-head").append("<th scope='col'></th><th scope='col'>Beer Name</th><th scope='col'>Style</th><th scope='col'>Description</th>");
+            for(var i=0;i<untap.beer_list.items.length;i++){
+                $("#beer-list-body").append("<tr><td><img src=" + untap.beer_list.items[i].beer.beer_label + "></td><td>" + untap.beer_list.items[i].beer.beer_name + "</td><td>" + untap.beer_list.items[i].beer.beer_style +"</td><td>"
+                + untap.beer_list.items[i].beer.beer_description + "</td></tr>");
+            }
             $("#exampleModalLabel").text(untap.brewery_name);
             $("#exampleModal").modal();
 
