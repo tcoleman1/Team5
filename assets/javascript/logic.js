@@ -229,6 +229,10 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
             $(".modal-body").append(modalImage);
             $(".modal-body").append(modalVenue);
             $("#exampleModalLabel").text(tm.name);
+            $(".modal-footer").append("<button type='button' class='btn btn-primary ticket-button' ></button>")
+            $(".ticket-button").text("Buy Tickets");
+            $(".ticket-button").attr("id",tm.url);
+            console.log(tm.url);
             $("#exampleModal").modal();
         },
         error: function (xhr, status, err) {
@@ -353,6 +357,12 @@ $(document).on("click", ".zomato", zomatoModal);
 $(document).on("click", ".fav-zomato", addFavRestaurant);
 $(document).on("click", ".fav-ticket", addFavEvent);
 $(document).on("click", ".brewery", getBrewID);
+$(document).on("click",".ticket-button", function(){
+    console.log($(this).attr('id'));
+    var url = $(this).attr('id');
+    window.open(url);
+});
+
 
 
 
