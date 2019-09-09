@@ -1,10 +1,23 @@
 body {
-    background-image: url(https://www.telegraph.co.uk/content/dam/Travel/galleries/travel/picturegalleries/The-worlds-best-city-skylines/skyline-toronto_3461626a.jpg);
+    background: url(http://getwallpapers.com/wallpaper/full/b/0/0/150798.jpg);
     background-repeat: no-repeat;
     background-size: 100% 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
     
 }
 
 .container {
    background-color: darkgray;
+   font-family: "Comic Sans MS", cursive, sans-serif;
 }
+
+.jumbotron {
+    background-image: url(https://thewallpaper.co//wp-content/uploads/2016/10/blue-sea-travel-wallpapers-hd-wallpaper-hd-download-free-background-images-mac-desktop-wallpapers-amazing-high-definition-1920x1080.jpg);
+    background-size: cover;
+  }
+
+  
