@@ -224,7 +224,7 @@ function ticketMaster(e) {
                 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//google maps labels array and index below
                 var labelIndex = 0;
                 $("#table-head").empty();//Need to clear the table column headings so that they can be specified for ticketmaster
-                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")//creates the ticketmaster events column headings
+                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'>More Info</th><th scope='col'>Favorite</th>")//creates the ticketmaster events column headings
                 $("#table-body").empty();//clearing the table body so that we can add rows of information specific to the ticket master events captured by the api
                 for (var i = 0; i < tm.length; i++) {//for loop similar to the zomatoGetRestaurants (see line 72)
                     $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + moment(tm[i].dates.start.localDate).format('MMM Do YYYY') + "</td><td>"
@@ -327,7 +327,7 @@ function openBreweryDB(e) {
                 var labelIndex = 0;
                 $("#table-head").empty();//Need to clear the table column headings so that they can be specified for breweriesa
                 $("#table-body").empty();
-                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
+                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'>More Info</th><th scope='col'></th>")
                 for (var i = 0; i < ob.length; i++) {
                     var name = ob[i].name;//this captures the name of each specific brewery in a given city
                     var urlName = name.split(' ').join('+');//this variable is needed for the getBrewId function and is saved as an id in a button that is created in each row of the table created below
