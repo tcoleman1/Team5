@@ -27,9 +27,9 @@ function zomatoGetCity(e) {//function that querys the zomato api to search for t
                     $(".modal-body").empty();
                     $(".ticket-button").remove();
                     modalDescription = $("<h5 style='text-align:center'>");
-                    modalDescription.text("Could not find this US City, please try again");
+                    modalDescription.text("We Could Not Find This US City, Please Try Again");
                     $(".modal-body").append(modalDescription);
-                    $("#exampleModalLabel").text("Zomato API Error");
+                    $("#exampleModalLabel").text("Invalid City");
                     $("#exampleModal").modal();
                 } else {
                     var cityID = data.location_suggestions[0].id;//this returns the id of the first suggested city from the zomato api (not foolproof but works pretty well)
@@ -196,9 +196,9 @@ function ticketMaster(e) {
                     $(".modal-body").empty();
                     $(".ticket-button").remove();
                     modalDescription = $("<h5 style='text-align:center'>");
-                    modalDescription.text("Could not find this US City, please try again");
+                    modalDescription.text("We Could Not Find This US City, Please Try Again");
                     $(".modal-body").append(modalDescription);
-                    $("#exampleModalLabel").text("Ticket Master API Error");
+                    $("#exampleModalLabel").text("Invalid City");
                     $("#exampleModal").modal();
                 } else {
                     var lat = data.location_suggestions[0].latitude;
@@ -298,9 +298,9 @@ function openBreweryDB(e) {
                     $(".modal-body").empty();
                     $(".ticket-button").remove();
                     modalDescription = $("<h5 style='text-align:center'>");
-                    modalDescription.text("Could not find this US City, please try again");
+                    modalDescription.text("We Could Not Find This US City, Please Try Again");
                     $(".modal-body").append(modalDescription);
-                    $("#exampleModalLabel").text("Untappd API Error");
+                    $("#exampleModalLabel").text("Invalid City");
                     $("#exampleModal").modal();
                 } else {
                     var lat = data.location_suggestions[0].latitude;
