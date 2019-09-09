@@ -14,7 +14,7 @@ var database = firebase.database();//creating database object to add and make ch
 
 function zomatoGetCity(e) {//function that querys the zomato api to search for the city from the users destination input and set the map location
     var city = $("#destination-input").val().trim();
-
+    if (city !== ""){
     $.ajax({//the ajax call that will search the zomato api- this returns an array of relevant cities based on user input
         type: "GET",
         dataType: 'json',
@@ -23,8 +23,19 @@ function zomatoGetCity(e) {//function that querys the zomato api to search for t
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557' //zomato api key
         },
         success: function (data) {
+            if (data.location_suggestions.length === 0 || city === "")
+            {
+                $(".modal-body").empty();
+                $(".ticket-button").remove();
+                modalDescription = $("<h5 style='text-align:center'>");
+                modalDescription.text("Could not find this US City, please try again");
+                $(".modal-body").append(modalDescription);
+                $("#exampleModalLabel").text("Zomato API Error");
+                $("#exampleModal").modal();
+            }else{
             var cityID = data.location_suggestions[0].id;//this returns the id of the first suggested city from the zomato api (not foolproof but works pretty well)
             zomatoGetRestaurants(cityID)//calls the zomatoGetRestaurants function passing the id captured in the ajax call
+            }
         },
         error: function (xhr, status, err) {
         }
@@ -50,7 +61,7 @@ function zomatoGetCity(e) {//function that querys the zomato api to search for t
         }
     });
     e.preventDefault();
-
+    }
 }
 function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity with the cityId that is captured in the city query search in the functon zomatoGetCity
     var id = a;
@@ -130,7 +141,6 @@ function getZomatoReviews(a) { // this function will get called on click of the 
     });
 }
 
-
 function addFavRestaurant() {//this function deals with adding a rstaurant id to the firebase server which can be called later to display the restaurants that have been favorited
     var id = $(this).attr('id');
     database.ref("/Restaurants/").push({
@@ -173,7 +183,7 @@ function ticketMaster(e) {
     var city = $("#destination-input").val().trim();//these calls grab the user input from the text inputs on the html page and saves them to local variables
     var startDate = $("#depart-input").val();
     var endDate = $("#return-date-input").val();
-
+    if (city !== "" && startDate !== "" && endDate !== ""){
     $.ajax({// this function re draws the google map to centrally locate to the city that the user is searching for (can be refactored)
         type: "GET",
         async: false,
@@ -183,6 +193,16 @@ function ticketMaster(e) {
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
         success: function (data) {
+            if (data.location_suggestions.length === 0)
+            {
+                $(".modal-body").empty();
+                $(".ticket-button").remove();
+                modalDescription = $("<h5 style='text-align:center'>");
+                modalDescription.text("Could not find this US City, please try again");
+                $(".modal-body").append(modalDescription);
+                $("#exampleModalLabel").text("Ticket Master API Error");
+                $("#exampleModal").modal();
+            }else{
             var lat = data.location_suggestions[0].latitude;
             var long = data.location_suggestions[0].longitude;
             maplocation = [lat, long];
@@ -190,7 +210,7 @@ function ticketMaster(e) {
                 center: { lat: maplocation[0], lng: maplocation[1] },
                 zoom: 12
             });
-
+        }
         },
         error: function (xhr, status, err) {
         }
@@ -226,6 +246,7 @@ function ticketMaster(e) {
         }
     });
     e.preventDefault();
+}
 }
 function addFavEvent() {//adding the ticket master event id's to the firebase server when the user clicks add to favorites
     var id = $(this).attr('id');
@@ -265,6 +286,7 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
 }
 function openBreweryDB(e) {
     var city = $("#destination-input").val().trim();
+    if (city !== ""){
     $.ajax({// the same zomato function that can be refactored - sets the map to the central location of the city - note to self:refactor
         type: "GET",
         async: false,
@@ -274,6 +296,16 @@ function openBreweryDB(e) {
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
         success: function (data) {
+            if (data.location_suggestions.length === 0)
+            {
+                $(".modal-body").empty();
+                $(".ticket-button").remove();
+                modalDescription = $("<h5 style='text-align:center'>");
+                modalDescription.text("Could not find this US City, please try again");
+                $(".modal-body").append(modalDescription);
+                $("#exampleModalLabel").text("Untappd API Error");
+                $("#exampleModal").modal();
+            }else{
             var lat = data.location_suggestions[0].latitude;
             var long = data.location_suggestions[0].longitude;
             maplocation = [lat, long];
@@ -281,10 +313,12 @@ function openBreweryDB(e) {
                 center: { lat: maplocation[0], lng: maplocation[1] },
                 zoom: 12
             });
+        }
         },
         error: function (xhr, status, err) {
         }
     });
+
     $.ajax({// this ajax call uses the openbrewerydb database to search for breweries by city name- returns 26 results (no problems with a-z on map display, can display up to 50 at a time)
         type: "GET",
         url: "https://api.openbrewerydb.org/breweries?by_city=" + city + "&per_page=26",
@@ -317,6 +351,7 @@ function openBreweryDB(e) {
         }
     });
     e.preventDefault();
+}
 }
 function getBrewID(e) {
     var name = $(this).attr('id');
