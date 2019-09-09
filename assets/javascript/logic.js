@@ -72,7 +72,7 @@ function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity wit
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
         success: function (data) {
-            // zomatoGetCuisines(id);
+            //zomatoGetCuisines(id);
             var z = data.restaurants;// this variable holds the json data from the first 20 trending restaurants in a given city from the ajax call
             var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//labels array to be displayed on entities in the google map
             var labelIndex = 0;//counter variable that will loop through the labels array
@@ -228,7 +228,7 @@ function ticketMaster(e) {
                 $("#table-body").empty();//clearing the table body so that we can add rows of information specific to the ticket master events captured by the api
                 for (var i = 0; i < tm.length; i++) {//for loop similar to the zomatoGetRestaurants (see line 72)
                     $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + moment(tm[i].dates.start.localDate).format('MMM Do YYYY') + "</td><td>"
-                        + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
+                        + moment(tm[i].dates.start.localTime,'HH:mm:ss').format('h:mm a') + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
                         + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
                         + tm[i].id + ">Add To Favorites</button></td></tr>");
                     var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);//same google maps calls(could be refactored)
@@ -326,8 +326,8 @@ function openBreweryDB(e) {
                 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 var labelIndex = 0;
                 $("#table-head").empty();//Need to clear the table column headings so that they can be specified for breweriesa
-                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
                 $("#table-body").empty();
+                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
                 for (var i = 0; i < ob.length; i++) {
                     var name = ob[i].name;//this captures the name of each specific brewery in a given city
                     var urlName = name.split(' ').join('+');//this variable is needed for the getBrewId function and is saved as an id in a button that is created in each row of the table created below
