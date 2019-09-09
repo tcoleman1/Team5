@@ -14,53 +14,52 @@ var database = firebase.database();//creating database object to add and make ch
 
 function zomatoGetCity(e) {//function that querys the zomato api to search for the city from the users destination input and set the map location
     var city = $("#destination-input").val().trim();
-    if (city !== ""){
-    $.ajax({//the ajax call that will search the zomato api- this returns an array of relevant cities based on user input
-        type: "GET",
-        dataType: 'json',
-        url: 'https://developers.zomato.com/api/v2.1/cities?q=' + city,
-        headers: {
-            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557' //zomato api key
-        },
-        success: function (data) {
-            if (data.location_suggestions.length === 0 || city === "")
-            {
-                $(".modal-body").empty();
-                $(".ticket-button").remove();
-                modalDescription = $("<h5 style='text-align:center'>");
-                modalDescription.text("Could not find this US City, please try again");
-                $(".modal-body").append(modalDescription);
-                $("#exampleModalLabel").text("Zomato API Error");
-                $("#exampleModal").modal();
-            }else{
-            var cityID = data.location_suggestions[0].id;//this returns the id of the first suggested city from the zomato api (not foolproof but works pretty well)
-            zomatoGetRestaurants(cityID)//calls the zomatoGetRestaurants function passing the id captured in the ajax call
+    if (city !== "") {
+        $.ajax({//the ajax call that will search the zomato api- this returns an array of relevant cities based on user input
+            type: "GET",
+            dataType: 'json',
+            url: 'https://developers.zomato.com/api/v2.1/cities?q=' + city,
+            headers: {
+                'user-key': 'caf17b1dfec1bc4c754bb5ebed865557' //zomato api key
+            },
+            success: function (data) {
+                if (data.location_suggestions.length === 0 || city === "") {
+                    $(".modal-body").empty();
+                    $(".ticket-button").remove();
+                    modalDescription = $("<h5 style='text-align:center'>");
+                    modalDescription.text("Could not find this US City, please try again");
+                    $(".modal-body").append(modalDescription);
+                    $("#exampleModalLabel").text("Zomato API Error");
+                    $("#exampleModal").modal();
+                } else {
+                    var cityID = data.location_suggestions[0].id;//this returns the id of the first suggested city from the zomato api (not foolproof but works pretty well)
+                    zomatoGetRestaurants(cityID)//calls the zomatoGetRestaurants function passing the id captured in the ajax call
+                }
+            },
+            error: function (xhr, status, err) {
             }
-        },
-        error: function (xhr, status, err) {
-        }
-    });
-    $.ajax({//this ajax call sets the google map to be centered at the coordinates from the first suggested city, this can be refactored to be included in the first ajax call now that im reviewing it
-        type: "GET",
-        dataType: 'json',
-        url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
-        headers: {
-            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
-        },
-        success: function (data) {
-            var lat = data.location_suggestions[0].latitude;
-            var long = data.location_suggestions[0].longitude;
-            maplocation = [lat, long];
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: maplocation[0], lng: maplocation[1] },
-                zoom: 12
-            });
+        });
+        $.ajax({//this ajax call sets the google map to be centered at the coordinates from the first suggested city, this can be refactored to be included in the first ajax call now that im reviewing it
+            type: "GET",
+            dataType: 'json',
+            url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
+            headers: {
+                'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
+            },
+            success: function (data) {
+                var lat = data.location_suggestions[0].latitude;
+                var long = data.location_suggestions[0].longitude;
+                maplocation = [lat, long];
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: maplocation[0], lng: maplocation[1] },
+                    zoom: 12
+                });
 
-        },
-        error: function (xhr, status, err) {
-        }
-    });
-    e.preventDefault();
+            },
+            error: function (xhr, status, err) {
+            }
+        });
+        e.preventDefault();
     }
 }
 function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity with the cityId that is captured in the city query search in the functon zomatoGetCity
@@ -73,7 +72,7 @@ function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity wit
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
         success: function (data) {
-           // zomatoGetCuisines(id);
+            // zomatoGetCuisines(id);
             var z = data.restaurants;// this variable holds the json data from the first 20 trending restaurants in a given city from the ajax call
             var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//labels array to be displayed on entities in the google map
             var labelIndex = 0;//counter variable that will loop through the labels array
@@ -183,70 +182,69 @@ function ticketMaster(e) {
     var city = $("#destination-input").val().trim();//these calls grab the user input from the text inputs on the html page and saves them to local variables
     var startDate = $("#depart-input").val();
     var endDate = $("#return-date-input").val();
-    if (city !== "" && startDate !== "" && endDate !== ""){
-    $.ajax({// this function re draws the google map to centrally locate to the city that the user is searching for (can be refactored)
-        type: "GET",
-        async: false,
-        dataType: 'json',
-        url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
-        headers: {
-            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
-        },
-        success: function (data) {
-            if (data.location_suggestions.length === 0)
-            {
-                $(".modal-body").empty();
-                $(".ticket-button").remove();
-                modalDescription = $("<h5 style='text-align:center'>");
-                modalDescription.text("Could not find this US City, please try again");
-                $(".modal-body").append(modalDescription);
-                $("#exampleModalLabel").text("Ticket Master API Error");
-                $("#exampleModal").modal();
-            }else{
-            var lat = data.location_suggestions[0].latitude;
-            var long = data.location_suggestions[0].longitude;
-            maplocation = [lat, long];
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: maplocation[0], lng: maplocation[1] },
-                zoom: 12
-            });
-        }
-        },
-        error: function (xhr, status, err) {
-        }
-    });
-    $.ajax({//This ajax call gets the users destination and timeframe in order to display all ticket master events that occur within the timeframe and location
-        type: "GET",
-        url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&city="
-            + city + "&startDateTime=" + startDate + "T00:00:00Z&endDateTime=" + endDate + "T00:00:00Z",//need to change to 11:59:59Z
-        async: true,
-        dataType: "json",
-        success: function (data) {
-            var tm = data._embedded.events;//creating a variable to hold json data from the api call
-            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//google maps labels array and index below
-            var labelIndex = 0;
-            $("#table-head").empty();//Need to clear the table column headings so that they can be specified for ticketmaster
-            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")//creates the ticketmaster events column headings
-            $("#table-body").empty();//clearing the table body so that we can add rows of information specific to the ticket master events captured by the api
-            for (var i = 0; i < tm.length; i++) {//for loop similar to the zomatoGetRestaurants (see line 72)
-                $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
-                    + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
-                    + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
-                    + tm[i].id + ">Add To Favorites</button></td></tr>");
-                var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);//same google maps calls(could be refactored)
-                var marker = new google.maps.Marker({
-                    animation: google.maps.Animation.DROP,
-                    position: myLatLng,
-                    label: labels[labelIndex++ % labels.length],
-                    map: map,
-                });
+    if (city !== "" || startDate !== "" || endDate !== "") {
+        $.ajax({// this function re draws the google map to centrally locate to the city that the user is searching for (can be refactored)
+            type: "GET",
+            async: false,
+            dataType: 'json',
+            url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
+            headers: {
+                'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
+            },
+            success: function (data) {
+                if (data.location_suggestions.length === 0) {
+                    $(".modal-body").empty();
+                    $(".ticket-button").remove();
+                    modalDescription = $("<h5 style='text-align:center'>");
+                    modalDescription.text("Could not find this US City, please try again");
+                    $(".modal-body").append(modalDescription);
+                    $("#exampleModalLabel").text("Ticket Master API Error");
+                    $("#exampleModal").modal();
+                } else {
+                    var lat = data.location_suggestions[0].latitude;
+                    var long = data.location_suggestions[0].longitude;
+                    maplocation = [lat, long];
+                    map = new google.maps.Map(document.getElementById('map'), {
+                        center: { lat: maplocation[0], lng: maplocation[1] },
+                        zoom: 12
+                    });
+                }
+            },
+            error: function (xhr, status, err) {
             }
-        },
-        error: function (xhr, status, err) {
-        }
-    });
-    e.preventDefault();
-}
+        });
+        $.ajax({//This ajax call gets the users destination and timeframe in order to display all ticket master events that occur within the timeframe and location
+            type: "GET",
+            url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&city="
+                + city + "&startDateTime=" + startDate + "T00:00:00Z&endDateTime=" + endDate + "T00:00:00Z",//need to change to 11:59:59Z
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                var tm = data._embedded.events;//creating a variable to hold json data from the api call
+                var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//google maps labels array and index below
+                var labelIndex = 0;
+                $("#table-head").empty();//Need to clear the table column headings so that they can be specified for ticketmaster
+                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")//creates the ticketmaster events column headings
+                $("#table-body").empty();//clearing the table body so that we can add rows of information specific to the ticket master events captured by the api
+                for (var i = 0; i < tm.length; i++) {//for loop similar to the zomatoGetRestaurants (see line 72)
+                    $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + tm[i].dates.start.localDate + "</td><td>"
+                        + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
+                        + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
+                        + tm[i].id + ">Add To Favorites</button></td></tr>");
+                    var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);//same google maps calls(could be refactored)
+                    var marker = new google.maps.Marker({
+                        animation: google.maps.Animation.DROP,
+                        position: myLatLng,
+                        label: labels[labelIndex++ % labels.length],
+                        map: map,
+                    });
+                }
+            },
+            error: function (xhr, status, err) {
+            }
+        });
+        e.preventDefault();
+    }
 }
 function addFavEvent() {//adding the ticket master event id's to the firebase server when the user clicks add to favorites
     var id = $(this).attr('id');
@@ -286,72 +284,71 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
 }
 function openBreweryDB(e) {
     var city = $("#destination-input").val().trim();
-    if (city !== ""){
-    $.ajax({// the same zomato function that can be refactored - sets the map to the central location of the city - note to self:refactor
-        type: "GET",
-        async: false,
-        dataType: 'json',
-        url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
-        headers: {
-            'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
-        },
-        success: function (data) {
-            if (data.location_suggestions.length === 0)
-            {
-                $(".modal-body").empty();
-                $(".ticket-button").remove();
-                modalDescription = $("<h5 style='text-align:center'>");
-                modalDescription.text("Could not find this US City, please try again");
-                $(".modal-body").append(modalDescription);
-                $("#exampleModalLabel").text("Untappd API Error");
-                $("#exampleModal").modal();
-            }else{
-            var lat = data.location_suggestions[0].latitude;
-            var long = data.location_suggestions[0].longitude;
-            maplocation = [lat, long];
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: maplocation[0], lng: maplocation[1] },
-                zoom: 12
-            });
-        }
-        },
-        error: function (xhr, status, err) {
-        }
-    });
-
-    $.ajax({// this ajax call uses the openbrewerydb database to search for breweries by city name- returns 26 results (no problems with a-z on map display, can display up to 50 at a time)
-        type: "GET",
-        url: "https://api.openbrewerydb.org/breweries?by_city=" + city + "&per_page=26",
-        async: true,
-        dataType: "json",
-        success: function (data) {
-            var ob = data;
-            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            var labelIndex = 0;
-            $("#table-head").empty();//Need to clear the table column headings so that they can be specified for breweriesa
-            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
-            $("#table-body").empty();
-            for (var i = 0; i < ob.length; i++) {
-                var name = ob[i].name;//this captures the name of each specific brewery in a given city
-                var urlName = name.split(' ').join('+');//this variable is needed for the getBrewId function and is saved as an id in a button that is created in each row of the table created below
-                console.log(urlName);
-                $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + ob[i].name + "</td><td>" + ob[i].brewery_type + "</td><td>"
-                    + ob[i].street + "</td><td><button type='button' class='btn btn-success brewery' data-toggle='modal' data-target='exampleModal' id="
-                    + urlName + ">More Info</button></td></tr>");
-                var myLatLng = new google.maps.LatLng(ob[i].latitude, ob[i].longitude);//google maps coordinates
-                var marker = new google.maps.Marker({//google maps place of interest markers
-                    animation: google.maps.Animation.DROP,
-                    position: myLatLng,
-                    label: labels[labelIndex++ % labels.length],
-                    map: map,
-                });
+    if (city !== "") {
+        $.ajax({// the same zomato function that can be refactored - sets the map to the central location of the city - note to self:refactor
+            type: "GET",
+            async: false,
+            dataType: 'json',
+            url: "https://developers.zomato.com/api/v2.1/locations?query=" + city,
+            headers: {
+                'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
+            },
+            success: function (data) {
+                if (data.location_suggestions.length === 0) {
+                    $(".modal-body").empty();
+                    $(".ticket-button").remove();
+                    modalDescription = $("<h5 style='text-align:center'>");
+                    modalDescription.text("Could not find this US City, please try again");
+                    $(".modal-body").append(modalDescription);
+                    $("#exampleModalLabel").text("Untappd API Error");
+                    $("#exampleModal").modal();
+                } else {
+                    var lat = data.location_suggestions[0].latitude;
+                    var long = data.location_suggestions[0].longitude;
+                    maplocation = [lat, long];
+                    map = new google.maps.Map(document.getElementById('map'), {
+                        center: { lat: maplocation[0], lng: maplocation[1] },
+                        zoom: 12
+                    });
+                }
+            },
+            error: function (xhr, status, err) {
             }
-        },
-        error: function (xhr, status, err) {
-        }
-    });
-    e.preventDefault();
-}
+        });
+
+        $.ajax({// this ajax call uses the openbrewerydb database to search for breweries by city name- returns 26 results (no problems with a-z on map display, can display up to 50 at a time)
+            type: "GET",
+            url: "https://api.openbrewerydb.org/breweries?by_city=" + city + "&per_page=26",
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                var ob = data;
+                var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                var labelIndex = 0;
+                $("#table-head").empty();//Need to clear the table column headings so that they can be specified for breweriesa
+                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
+                $("#table-body").empty();
+                for (var i = 0; i < ob.length; i++) {
+                    var name = ob[i].name;//this captures the name of each specific brewery in a given city
+                    var urlName = name.split(' ').join('+');//this variable is needed for the getBrewId function and is saved as an id in a button that is created in each row of the table created below
+                    console.log(urlName);
+                    $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + ob[i].name + "</td><td>" + ob[i].brewery_type + "</td><td>"
+                        + ob[i].street + "</td><td><button type='button' class='btn btn-success brewery' data-toggle='modal' data-target='exampleModal' id="
+                        + urlName + ">More Info</button></td></tr>");
+                    var myLatLng = new google.maps.LatLng(ob[i].latitude, ob[i].longitude);//google maps coordinates
+                    var marker = new google.maps.Marker({//google maps place of interest markers
+                        animation: google.maps.Animation.DROP,
+                        position: myLatLng,
+                        label: labels[labelIndex++ % labels.length],
+                        map: map,
+                    });
+                }
+            },
+            error: function (xhr, status, err) {
+            }
+        });
+        e.preventDefault();
+    }
 }
 function getBrewID(e) {
     var name = $(this).attr('id');
@@ -361,7 +358,7 @@ function getBrewID(e) {
         async: false,
         dataType: "json",
         success: function (data) {
-            if (data.response.found === 0){
+            if (data.response.found === 0) {
                 $(".modal-body").empty();
                 $(".ticket-button").remove();
                 modalDescription = $("<h5 style='text-align:center'>");
@@ -369,13 +366,13 @@ function getBrewID(e) {
                 $(".modal-body").append(modalDescription);
                 $("#exampleModalLabel").text("Untappd API Error");
                 $("#exampleModal").modal();
-            }else{
-            var id = data.response.brewery.items[0].brewery.brewery_id;
-            breweryModal(id);
+            } else {
+                var id = data.response.brewery.items[0].brewery.brewery_id;
+                breweryModal(id);
             }
         },
         error: function (xhr, status, err) {
-            
+
         }
     });
     e.preventDefault();
