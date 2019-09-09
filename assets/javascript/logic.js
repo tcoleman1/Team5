@@ -27,9 +27,9 @@ function zomatoGetCity(e) {//function that querys the zomato api to search for t
                     $(".modal-body").empty();
                     $(".ticket-button").remove();
                     modalDescription = $("<h5 style='text-align:center'>");
-                    modalDescription.text("Could not find this US City, please try again");
+                    modalDescription.text("We Could Not Find This US City, Please Try Again");
                     $(".modal-body").append(modalDescription);
-                    $("#exampleModalLabel").text("Zomato API Error");
+                    $("#exampleModalLabel").text("Invalid City");
                     $("#exampleModal").modal();
                 } else {
                     var cityID = data.location_suggestions[0].id;//this returns the id of the first suggested city from the zomato api (not foolproof but works pretty well)
@@ -72,12 +72,12 @@ function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity wit
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
         success: function (data) {
-            // zomatoGetCuisines(id);
+            //zomatoGetCuisines(id);
             var z = data.restaurants;// this variable holds the json data from the first 20 trending restaurants in a given city from the ajax call
             var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//labels array to be displayed on entities in the google map
             var labelIndex = 0;//counter variable that will loop through the labels array
             $("#table-head").empty();//clearing all column titles from the html table 
-            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'></th><th scope='col'></th>");//creating the column headings for diplaying restaurants
+            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'>More Info</th><th scope='col'>Favorite</th>");//creating the column headings for diplaying restaurants
             $("#table-body").empty();//clearing the main contents of the table so that new information can be added
             for (var i = 0; i < z.length; i++) {//each time this loop iterates a new table row will be created and appended with restaurant information captured from the api
                 $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + z[i].restaurant.name + "</td><td>" + z[i].restaurant.cuisines + "</td><td>"
@@ -196,9 +196,9 @@ function ticketMaster(e) {
                     $(".modal-body").empty();
                     $(".ticket-button").remove();
                     modalDescription = $("<h5 style='text-align:center'>");
-                    modalDescription.text("Could not find this US City, please try again");
+                    modalDescription.text("We Could Not Find This US City, Please Try Again");
                     $(".modal-body").append(modalDescription);
-                    $("#exampleModalLabel").text("Ticket Master API Error");
+                    $("#exampleModalLabel").text("Invalid City");
                     $("#exampleModal").modal();
                 } else {
                     var lat = data.location_suggestions[0].latitude;
@@ -224,11 +224,11 @@ function ticketMaster(e) {
                 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//google maps labels array and index below
                 var labelIndex = 0;
                 $("#table-head").empty();//Need to clear the table column headings so that they can be specified for ticketmaster
-                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'></th><th scope='col'></th>")//creates the ticketmaster events column headings
+                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Event Name</th><th scope='col'>Date</th><th scope='col'>Time</th><th scope='col'>More Info</th><th scope='col'>Favorite</th>")//creates the ticketmaster events column headings
                 $("#table-body").empty();//clearing the table body so that we can add rows of information specific to the ticket master events captured by the api
                 for (var i = 0; i < tm.length; i++) {//for loop similar to the zomatoGetRestaurants (see line 72)
                     $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + moment(tm[i].dates.start.localDate).format('MMM Do YYYY') + "</td><td>"
-                        + tm[i].dates.start.localTime + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
+                        + moment(tm[i].dates.start.localTime,'HH:mm:ss').format('h:mm a') + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
                         + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
                         + tm[i].id + ">Add To Favorites</button></td></tr>");
                     var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);//same google maps calls(could be refactored)
@@ -298,9 +298,9 @@ function openBreweryDB(e) {
                     $(".modal-body").empty();
                     $(".ticket-button").remove();
                     modalDescription = $("<h5 style='text-align:center'>");
-                    modalDescription.text("Could not find this US City, please try again");
+                    modalDescription.text("We Could Not Find This US City, Please Try Again");
                     $(".modal-body").append(modalDescription);
-                    $("#exampleModalLabel").text("Untappd API Error");
+                    $("#exampleModalLabel").text("Invalid City");
                     $("#exampleModal").modal();
                 } else {
                     var lat = data.location_suggestions[0].latitude;
@@ -318,7 +318,7 @@ function openBreweryDB(e) {
 
         $.ajax({// this ajax call uses the openbrewerydb database to search for breweries by city name- returns 26 results (no problems with a-z on map display, can display up to 50 at a time)
             type: "GET",
-            url: "https://api.openbrewerydb.org/breweries?by_city=" + city + "&per_page=26",
+            url: "https://api.openbrewerydb.org/breweries?by_city=" + city + "&per_page=22",
             async: true,
             dataType: "json",
             success: function (data) {
@@ -326,8 +326,8 @@ function openBreweryDB(e) {
                 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 var labelIndex = 0;
                 $("#table-head").empty();//Need to clear the table column headings so that they can be specified for breweriesa
-                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'></th><th scope='col'></th>")
                 $("#table-body").empty();
+                $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Brewery Name</th><th scope='col'>Type</th><th scope='col'>Address</th><th scope='col'>More Info</th><th scope='col'></th>")
                 for (var i = 0; i < ob.length; i++) {
                     var name = ob[i].name;//this captures the name of each specific brewery in a given city
                     var urlName = name.split(' ').join('+');//this variable is needed for the getBrewId function and is saved as an id in a button that is created in each row of the table created below
