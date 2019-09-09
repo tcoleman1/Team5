@@ -62,7 +62,6 @@ function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity wit
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
         success: function (data) {
-            console.log(data);
            // zomatoGetCuisines(id);
             var z = data.restaurants;// this variable holds the json data from the first 20 trending restaurants in a given city from the ajax call
             var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//labels array to be displayed on entities in the google map
@@ -105,10 +104,7 @@ function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity wit
             $(".dropdown").append("<div class='dropdown-menu' aria-labelledby='dropdownMenu'></div>");
             for (var i = 0;i < c.length; i++){
                 $(".dropdown-menu").append("<a class='dropdown-item'>"+ c[i].cuisine.cuisine_name +"</a>");
-            }
-          
-                
-            
+            }           
         },
         error: function (xhr, status, err) {
         }
@@ -125,19 +121,12 @@ function getZomatoReviews(a) { // this function will get called on click of the 
         },
         success: function (data) {
             var reviews = data.user_reviews;
-
-
-
-
             $(".modal-body").append("<table class='table'><thead><tr id='review-list-head'></tr></thead><tbody id='review-list-body'></tbody></table>");
             $("#review-list-head").append("<th scope='col'></th><th scope='col'>UserName</th><th scope='col'>Ratings</th><th scope='col'>Reviews</th>");
             for (var i = 0; i < reviews.length; i++) {
                 $("#review-list-body").append("<tr><td><img src=" + reviews[i].review.user.profile_image + "</td><td>" + reviews[i].review.user.name + "</td>" + "<td>" + reviews[i].review.rating + "</td><td>" + reviews[i].review.review_text + "</td><td>");
-
-
             }
         }
-
     });
 }
 
@@ -150,7 +139,6 @@ function addFavRestaurant() {//this function deals with adding a rstaurant id to
 }
 function zomatoModal(e) {//this function happens when then "more info" button is clicked and the pop up modal is displayed on the screen
     var id = $(this).attr('id');//capturing the id of a given restaurant so that another ajax call can be made to get more specific details of that restaurant
-    console.log(id);
     $.ajax({
         type: "GET",
         dataType: 'json',
@@ -247,7 +235,6 @@ function addFavEvent() {//adding the ticket master event id's to the firebase se
 }
 function ticketMasterModal(e) {//this function works very similiarly to the zomatoModal function ( see zomatoModal(e) )--line 97
     var id = $(this).attr('id');
-    console.log(id);
     $.ajax({
         type: "GET",
         url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&id=" + id,
@@ -268,7 +255,6 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
             $(".modal-footer").append("<button type='button' class='btn btn-primary ticket-button' ></button>")
             $(".ticket-button").text("Buy Tickets");
             $(".ticket-button").attr("id", tm.url);
-            console.log(tm.url);
             $("#exampleModal").modal();
         },
         error: function (xhr, status, err) {
@@ -295,7 +281,6 @@ function openBreweryDB(e) {
                 center: { lat: maplocation[0], lng: maplocation[1] },
                 zoom: 12
             });
-
         },
         error: function (xhr, status, err) {
         }
@@ -341,11 +326,21 @@ function getBrewID(e) {
         async: false,
         dataType: "json",
         success: function (data) {
+            if (data.response.found === 0){
+                $(".modal-body").empty();
+                $(".ticket-button").remove();
+                modalDescription = $("<h5 style='text-align:center'>");
+                modalDescription.text("Could not find this brewery at the moment, please check back another time");
+                $(".modal-body").append(modalDescription);
+                $("#exampleModalLabel").text("Untappd API Error");
+                $("#exampleModal").modal();
+            }else{
             var id = data.response.brewery.items[0].brewery.brewery_id;
             breweryModal(id);
-
+            }
         },
         error: function (xhr, status, err) {
+            
         }
     });
     e.preventDefault();
@@ -399,6 +394,7 @@ $(document).on("click", ".ticket-button", function () {
     var url = $(this).attr('id');
     window.open(url);
 });
+
 
 
 
