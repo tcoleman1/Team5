@@ -318,7 +318,7 @@ function openBreweryDB(e) {
 
         $.ajax({// this ajax call uses the openbrewerydb database to search for breweries by city name- returns 26 results (no problems with a-z on map display, can display up to 50 at a time)
             type: "GET",
-            url: "https://api.openbrewerydb.org/breweries?by_city=" + city + "&per_page=26",
+            url: "https://api.openbrewerydb.org/breweries?by_city=" + city + "&per_page=22",
             async: true,
             dataType: "json",
             success: function (data) {
