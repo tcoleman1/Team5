@@ -77,7 +77,7 @@ function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity wit
             var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';//labels array to be displayed on entities in the google map
             var labelIndex = 0;//counter variable that will loop through the labels array
             $("#table-head").empty();//clearing all column titles from the html table 
-            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'></th><th scope='col'></th>");//creating the column headings for diplaying restaurants
+            $("#table-head").append("<th scope='col'>Map</th><th scope='col'>Restaurant Name</th><th scope='col'>Type</th><th scope='col'>Rating</th><th scope='col'>More Info</th><th scope='col'>Favorite</th>");//creating the column headings for diplaying restaurants
             $("#table-body").empty();//clearing the main contents of the table so that new information can be added
             for (var i = 0; i < z.length; i++) {//each time this loop iterates a new table row will be created and appended with restaurant information captured from the api
                 $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + z[i].restaurant.name + "</td><td>" + z[i].restaurant.cuisines + "</td><td>"
