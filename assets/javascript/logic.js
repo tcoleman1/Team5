@@ -291,7 +291,7 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
             var venueImage = $("<br><img><br>")
             venueImage.attr("src", tm._embedded.venues[0].images[0].url);
             venueImage.attr("height", "250px");
-            venueImage.attr("width", "750px");
+            venueImage.attr("width", "100%");
             $(".modal-body").append(venueImage);
             }
             if (tm.info){
