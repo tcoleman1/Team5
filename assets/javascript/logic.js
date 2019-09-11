@@ -170,6 +170,7 @@ function zomatoModal(e) {//this function happens when then "more info" button is
             var modalImage = $("<img><br>")//this creates a variable that will hold an html image
             modalImage.attr("src", z.featured_image);//setting the attribute of src to the image with the image url provided in the zomato api
             modalImage.attr("height", "200px");//constricting the image to a height of 200px(can be changed when we swtich to the larger modal format)
+            modalImage.attr("style","margin-left:25%");
             modalPhone = $("<h5 style='text-align:center'>");//this creates an html <h5> text object that will be center aligned
             modalAddress = $("<h5 style='text-align:center'>");
             modalAddress.text(z.location.address);//setting the text of this html <h5> to include the address of the restaurant that is targeted by clicking "more info"
