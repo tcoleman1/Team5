@@ -233,7 +233,7 @@ function ticketMaster(e) {
         $.ajax({//This ajax call gets the users destination and timeframe in order to display all ticket master events that occur within the timeframe and location
             type: "GET",
             url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&city="
-                + city + "&startDateTime=" + startDate + "T00:00:00Z&endDateTime=" + endDate + "T00:00:00Z",//need to change to 11:59:59Z
+                + city + "&startDateTime=" + startDate + "T00:00:00Z&endDateTime=" + endDate + "T00:00:00Z&sort=date,asc",//need to change to 11:59:59Z
             async: true,
             dataType: "json",
             success: function (data) {
@@ -427,8 +427,9 @@ function breweryModal(e) {
             var modalImage = $("<img><br>")
             modalImage.attr("src", untap.brewery_label);
             modalImage.attr("height", "300px");
+            modalImage.attr("style","margin-left:25%");
             $(".modal-body").append(modalImage);
-            modalDescription = $("<h5 style='text-align:center'>");
+            modalDescription = $("<br><h5 style='text-align:center'></h5><br><br>");
             modalDescription.text(untap.brewery_description);
             $(".modal-body").append(modalDescription);
             if (untap.beer_list.items.length === 0) {
