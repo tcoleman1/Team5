@@ -137,6 +137,7 @@ function getZomatoReviews(a) { // this function will get called on click of the 
         headers: {
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
+<<<<<<< HEAD
         success: function (data) {
             var reviews = data.user_reviews;
             $(".modal-body").append("<table class='table'><thead><tr id='review-list-head'></tr></thead><tbody id='review-list-body'></tbody></table>");
@@ -147,6 +148,25 @@ function getZomatoReviews(a) { // this function will get called on click of the 
         }
     });
 }
+=======
+                success: function (data) {
+                    var reviews = data.user_reviews;
+                   
+
+
+
+                    $(".modal-body").append("<table class='table'><thead><tr id='review-list-head'></tr></thead><tbody id='review-list-body'></tbody></table>");
+           $("#review-list-head").append("<th scope='col'></th><th scope='col'>UserName</th><th scope='col'>Ratings</th><th scope='col'>Reviews</th>");
+           for(var i=0;i<reviews.length;i++){
+               $("#review-list-body").append("<tr><td><img src=" + reviews[i].review.user.profile_image  +  "</td><td>" + reviews[i].review.user.name + "</td>" + "<td>" + reviews[i].review.rating+ "</td><td>" + reviews[i].review.review_text +"</td><td>");
+           
+
+                }}
+            
+            });
+        }      
+
+>>>>>>> master
 
 function addFavRestaurant() {//this function deals with adding a rstaurant id to the firebase server which can be called later to display the restaurants that have been favorited
     var id = $(this).attr('id');
@@ -454,7 +474,6 @@ function breweryModal(e) {
 $("#tm-button").on("click", ticketMaster);
 $("#restaurant-button").on("click", zomatoGetCity);
 $("#ob-button").on("click", openBreweryDB);
-$("#reviews-button").on("click", getZomatoReviews);
 //These calls are formatted this way because these buttons are not loaded in the html document on start - they are dynamically created
 $(document).on("click", ".ticket", ticketMasterModal);
 $(document).on("click", ".zomato", zomatoModal);
