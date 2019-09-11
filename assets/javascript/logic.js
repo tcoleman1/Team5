@@ -270,6 +270,7 @@ function addFavEvent() {//adding the ticket master event id's to the firebase se
 }
 function ticketMasterModal(e) {//this function works very similiarly to the zomatoModal function ( see zomatoModal(e) )--line 97
     var id = $(this).attr('id');
+    console.log(id);
     $.ajax({
         type: "GET",
         url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&id=" + id,
@@ -281,10 +282,21 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
             var modalImage = $("<img><br>")
             modalImage.attr("src", tm.images[1].url);
             modalImage.attr("height", "200px");
-            modalVenue = $("<h5 style='text-align:center'>");
+            modalImage.attr("style","margin-left:25%");
+            modalVenue = $("<br><br><h5 style='text-align:center'></h5><br>");
             modalVenue.text(tm._embedded.venues[0].name);
             $(".modal-body").append(modalImage);
             $(".modal-body").append(modalVenue);
+            if (tm._embedded.venues[0].images){
+            var venueImage = $("<br><img><br>")
+            venueImage.attr("src", tm._embedded.venues[0].images[0].url);
+            venueImage.attr("height", "250px");
+            venueImage.attr("width", "750px");
+            $(".modal-body").append(venueImage);
+            }
+            if (tm.info){
+             $(".modal-body").append("<br><h5 style='text-align:center'>" +tm.info +"</h5><br>");
+            }
             $("#exampleModalLabel").text(tm.name);
             $(".ticket-button").remove();
             $(".modal-footer").append("<button type='button' class='btn btn-primary ticket-button' ></button>")
