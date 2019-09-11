@@ -14,7 +14,16 @@ var database = firebase.database();//creating database object to add and make ch
 
 function zomatoGetCity(e) {//function that querys the zomato api to search for the city from the users destination input and set the map location
     var city = $("#destination-input").val().trim();
-    if (city !== "") {
+    if (city == '') {
+        $(".modal-body").empty();
+        $(".ticket-button").remove();
+        modalDescription = $("<h5 style='text-align:center'>");
+        modalDescription.text("Please Submit a Valid Form");
+        $(".modal-body").append(modalDescription);
+        $("#exampleModalLabel").text("Invalid Form");
+        $("#exampleModal").modal();
+    }
+    else {
         $.ajax({//the ajax call that will search the zomato api- this returns an array of relevant cities based on user input
             type: "GET",
             dataType: 'json',
@@ -23,7 +32,7 @@ function zomatoGetCity(e) {//function that querys the zomato api to search for t
                 'user-key': 'caf17b1dfec1bc4c754bb5ebed865557' //zomato api key
             },
             success: function (data) {
-                if (data.location_suggestions.length === 0 || city === "") {
+                if (data.location_suggestions.length === 0) {
                     $(".modal-body").empty();
                     $(".ticket-button").remove();
                     modalDescription = $("<h5 style='text-align:center'>");
@@ -59,8 +68,7 @@ function zomatoGetCity(e) {//function that querys the zomato api to search for t
             error: function (xhr, status, err) {
             }
         });
-        e.preventDefault();
-    }
+    } e.preventDefault();
 }
 function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity with the cityId that is captured in the city query search in the functon zomatoGetCity
     var id = a;
@@ -182,7 +190,16 @@ function ticketMaster(e) {
     var city = $("#destination-input").val().trim();//these calls grab the user input from the text inputs on the html page and saves them to local variables
     var startDate = $("#depart-input").val();
     var endDate = $("#return-date-input").val();
-    if (city !== "" || startDate !== "" || endDate !== "") {
+    if (city == '' || startDate == '' || endDate == '') {
+        $(".modal-body").empty();
+        $(".ticket-button").remove();
+        modalDescription = $("<h5 style='text-align:center'>");
+        modalDescription.text("Please Submit a Valid Form");
+        $(".modal-body").append(modalDescription);
+        $("#exampleModalLabel").text("Invalid Form");
+        $("#exampleModal").modal();
+    }
+    else {
         $.ajax({// this function re draws the google map to centrally locate to the city that the user is searching for (can be refactored)
             type: "GET",
             async: false,
@@ -228,7 +245,7 @@ function ticketMaster(e) {
                 $("#table-body").empty();//clearing the table body so that we can add rows of information specific to the ticket master events captured by the api
                 for (var i = 0; i < tm.length; i++) {//for loop similar to the zomatoGetRestaurants (see line 72)
                     $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + moment(tm[i].dates.start.localDate).format('MMM Do YYYY') + "</td><td>"
-                        + moment(tm[i].dates.start.localTime,'HH:mm:ss').format('h:mm a') + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
+                        + moment(tm[i].dates.start.localTime, 'HH:mm:ss').format('h:mm a') + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
                         + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
                         + tm[i].id + ">Add To Favorites</button></td></tr>");
                     var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);//same google maps calls(could be refactored)
@@ -243,8 +260,7 @@ function ticketMaster(e) {
             error: function (xhr, status, err) {
             }
         });
-        e.preventDefault();
-    }
+    } e.preventDefault();
 }
 function addFavEvent() {//adding the ticket master event id's to the firebase server when the user clicks add to favorites
     var id = $(this).attr('id');
@@ -284,7 +300,16 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
 }
 function openBreweryDB(e) {
     var city = $("#destination-input").val().trim();
-    if (city !== "") {
+    if (city == '') {
+        $(".modal-body").empty();
+        $(".ticket-button").remove();
+        modalDescription = $("<h5 style='text-align:center'>");
+        modalDescription.text("Please Submit a Valid Form");
+        $(".modal-body").append(modalDescription);
+        $("#exampleModalLabel").text("Invalid Form");
+        $("#exampleModal").modal();
+    }
+    else {
         $.ajax({// the same zomato function that can be refactored - sets the map to the central location of the city - note to self:refactor
             type: "GET",
             async: false,
@@ -347,8 +372,7 @@ function openBreweryDB(e) {
             error: function (xhr, status, err) {
             }
         });
-        e.preventDefault();
-    }
+    } e.preventDefault();
 }
 function getBrewID(e) {
     var name = $(this).attr('id');
