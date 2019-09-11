@@ -14,7 +14,16 @@ var database = firebase.database();//creating database object to add and make ch
 
 function zomatoGetCity(e) {//function that querys the zomato api to search for the city from the users destination input and set the map location
     var city = $("#destination-input").val().trim();
-    if (city !== "") {
+    if (city == '') {
+        $(".modal-body").empty();
+        $(".ticket-button").remove();
+        modalDescription = $("<h5 style='text-align:center'>");
+        modalDescription.text("Please Submit a Valid Form");
+        $(".modal-body").append(modalDescription);
+        $("#exampleModalLabel").text("Invalid Form");
+        $("#exampleModal").modal();
+    }
+    else {
         $.ajax({//the ajax call that will search the zomato api- this returns an array of relevant cities based on user input
             type: "GET",
             dataType: 'json',
@@ -23,7 +32,7 @@ function zomatoGetCity(e) {//function that querys the zomato api to search for t
                 'user-key': 'caf17b1dfec1bc4c754bb5ebed865557' //zomato api key
             },
             success: function (data) {
-                if (data.location_suggestions.length === 0 || city === "") {
+                if (data.location_suggestions.length === 0) {
                     $(".modal-body").empty();
                     $(".ticket-button").remove();
                     modalDescription = $("<h5 style='text-align:center'>");
@@ -59,8 +68,7 @@ function zomatoGetCity(e) {//function that querys the zomato api to search for t
             error: function (xhr, status, err) {
             }
         });
-        e.preventDefault();
-    }
+    } e.preventDefault();
 }
 function zomatoGetRestaurants(a) {//this function is called by zomatoGetCity with the cityId that is captured in the city query search in the functon zomatoGetCity
     var id = a;
@@ -129,7 +137,6 @@ function getZomatoReviews(a) { // this function will get called on click of the 
         headers: {
             'user-key': 'caf17b1dfec1bc4c754bb5ebed865557'
         },
-<<<<<<< HEAD
         success: function (data) {
             var reviews = data.user_reviews;
             $(".modal-body").append("<table class='table'><thead><tr id='review-list-head'></tr></thead><tbody id='review-list-body'></tbody></table>");
@@ -140,25 +147,6 @@ function getZomatoReviews(a) { // this function will get called on click of the 
         }
     });
 }
-=======
-                success: function (data) {
-                    var reviews = data.user_reviews;
-                   
-
-
-
-                    $(".modal-body").append("<table class='table'><thead><tr id='review-list-head'></tr></thead><tbody id='review-list-body'></tbody></table>");
-           $("#review-list-head").append("<th scope='col'></th><th scope='col'>UserName</th><th scope='col'>Ratings</th><th scope='col'>Reviews</th>");
-           for(var i=0;i<reviews.length;i++){
-               $("#review-list-body").append("<tr><td><img src=" + reviews[i].review.user.profile_image  +  "</td><td>" + reviews[i].review.user.name + "</td>" + "<td>" + reviews[i].review.rating+ "</td><td>" + reviews[i].review.review_text +"</td><td>");
-           
-
-                }}
-            
-            });
-        }      
-
->>>>>>> master
 
 function addFavRestaurant() {//this function deals with adding a rstaurant id to the firebase server which can be called later to display the restaurants that have been favorited
     var id = $(this).attr('id');
@@ -182,6 +170,7 @@ function zomatoModal(e) {//this function happens when then "more info" button is
             var modalImage = $("<img><br>")//this creates a variable that will hold an html image
             modalImage.attr("src", z.featured_image);//setting the attribute of src to the image with the image url provided in the zomato api
             modalImage.attr("height", "200px");//constricting the image to a height of 200px(can be changed when we swtich to the larger modal format)
+            modalImage.attr("style","margin-left:25%");
             modalPhone = $("<h5 style='text-align:center'>");//this creates an html <h5> text object that will be center aligned
             modalAddress = $("<h5 style='text-align:center'>");
             modalAddress.text(z.location.address);//setting the text of this html <h5> to include the address of the restaurant that is targeted by clicking "more info"
@@ -202,7 +191,16 @@ function ticketMaster(e) {
     var city = $("#destination-input").val().trim();//these calls grab the user input from the text inputs on the html page and saves them to local variables
     var startDate = $("#depart-input").val();
     var endDate = $("#return-date-input").val();
-    if (city !== "" || startDate !== "" || endDate !== "") {
+    if (city == '' || startDate == '' || endDate == '') {
+        $(".modal-body").empty();
+        $(".ticket-button").remove();
+        modalDescription = $("<h5 style='text-align:center'>");
+        modalDescription.text("Please Submit a Valid Form");
+        $(".modal-body").append(modalDescription);
+        $("#exampleModalLabel").text("Invalid Form");
+        $("#exampleModal").modal();
+    }
+    else {
         $.ajax({// this function re draws the google map to centrally locate to the city that the user is searching for (can be refactored)
             type: "GET",
             async: false,
@@ -236,7 +234,7 @@ function ticketMaster(e) {
         $.ajax({//This ajax call gets the users destination and timeframe in order to display all ticket master events that occur within the timeframe and location
             type: "GET",
             url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&city="
-                + city + "&startDateTime=" + startDate + "T00:00:00Z&endDateTime=" + endDate + "T00:00:00Z",//need to change to 11:59:59Z
+                + city + "&startDateTime=" + startDate + "T00:00:00Z&endDateTime=" + endDate + "T00:00:00Z&sort=date,asc",//need to change to 11:59:59Z
             async: true,
             dataType: "json",
             success: function (data) {
@@ -248,7 +246,7 @@ function ticketMaster(e) {
                 $("#table-body").empty();//clearing the table body so that we can add rows of information specific to the ticket master events captured by the api
                 for (var i = 0; i < tm.length; i++) {//for loop similar to the zomatoGetRestaurants (see line 72)
                     $("#table-body").append("<tr>" + "<td>" + labels[labelIndex] + "</td><td>" + tm[i].name + "</td><td>" + moment(tm[i].dates.start.localDate).format('MMM Do YYYY') + "</td><td>"
-                        + moment(tm[i].dates.start.localTime,'HH:mm:ss').format('h:mm a') + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
+                        + moment(tm[i].dates.start.localTime, 'HH:mm:ss').format('h:mm a') + "</td><td><button type='button' class='btn btn-success ticket' data-toggle='modal' data-target='exampleModal' id="
                         + tm[i].id + ">More Info</button></td><td><button type='button' class='btn btn-warning fav-ticket' id="
                         + tm[i].id + ">Add To Favorites</button></td></tr>");
                     var myLatLng = new google.maps.LatLng(tm[i]._embedded.venues[0].location.latitude, tm[i]._embedded.venues[0].location.longitude);//same google maps calls(could be refactored)
@@ -263,8 +261,7 @@ function ticketMaster(e) {
             error: function (xhr, status, err) {
             }
         });
-        e.preventDefault();
-    }
+    } e.preventDefault();
 }
 function addFavEvent() {//adding the ticket master event id's to the firebase server when the user clicks add to favorites
     var id = $(this).attr('id');
@@ -274,6 +271,7 @@ function addFavEvent() {//adding the ticket master event id's to the firebase se
 }
 function ticketMasterModal(e) {//this function works very similiarly to the zomatoModal function ( see zomatoModal(e) )--line 97
     var id = $(this).attr('id');
+    console.log(id);
     $.ajax({
         type: "GET",
         url: "https://app.ticketmaster.com/discovery/v2/events.json?apikey=YlU1Z6st1DDtdKQahLrwevvAJXCU3LXr&id=" + id,
@@ -285,10 +283,21 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
             var modalImage = $("<img><br>")
             modalImage.attr("src", tm.images[1].url);
             modalImage.attr("height", "200px");
-            modalVenue = $("<h5 style='text-align:center'>");
+            modalImage.attr("style","margin-left:25%");
+            modalVenue = $("<br><br><h5 style='text-align:center'></h5><br>");
             modalVenue.text(tm._embedded.venues[0].name);
             $(".modal-body").append(modalImage);
             $(".modal-body").append(modalVenue);
+            if (tm._embedded.venues[0].images){
+            var venueImage = $("<br><img><br>")
+            venueImage.attr("src", tm._embedded.venues[0].images[0].url);
+            venueImage.attr("height", "250px");
+            venueImage.attr("width", "100%");
+            $(".modal-body").append(venueImage);
+            }
+            if (tm.info){
+             $(".modal-body").append("<br><h5 style='text-align:center'>" +tm.info +"</h5><br>");
+            }
             $("#exampleModalLabel").text(tm.name);
             $(".ticket-button").remove();
             $(".modal-footer").append("<button type='button' class='btn btn-primary ticket-button' ></button>")
@@ -304,7 +313,16 @@ function ticketMasterModal(e) {//this function works very similiarly to the zoma
 }
 function openBreweryDB(e) {
     var city = $("#destination-input").val().trim();
-    if (city !== "") {
+    if (city == '') {
+        $(".modal-body").empty();
+        $(".ticket-button").remove();
+        modalDescription = $("<h5 style='text-align:center'>");
+        modalDescription.text("Please Submit a Valid Form");
+        $(".modal-body").append(modalDescription);
+        $("#exampleModalLabel").text("Invalid Form");
+        $("#exampleModal").modal();
+    }
+    else {
         $.ajax({// the same zomato function that can be refactored - sets the map to the central location of the city - note to self:refactor
             type: "GET",
             async: false,
@@ -367,8 +385,7 @@ function openBreweryDB(e) {
             error: function (xhr, status, err) {
             }
         });
-        e.preventDefault();
-    }
+    } e.preventDefault();
 }
 function getBrewID(e) {
     var name = $(this).attr('id');
@@ -411,15 +428,20 @@ function breweryModal(e) {
             var modalImage = $("<img><br>")
             modalImage.attr("src", untap.brewery_label);
             modalImage.attr("height", "300px");
+            modalImage.attr("style","margin-left:25%");
             $(".modal-body").append(modalImage);
-            modalDescription = $("<h5 style='text-align:center'>");
+            modalDescription = $("<br><h5 style='text-align:center'></h5><br><br>");
             modalDescription.text(untap.brewery_description);
             $(".modal-body").append(modalDescription);
-            $(".modal-body").append("<table class='table'><thead><tr id='beer-list-head'></tr></thead><tbody id='beer-list-body'></tbody></table>");
-            $("#beer-list-head").append("<th scope='col'></th><th scope='col'>Beer Name</th><th scope='col'>Style</th><th scope='col'>Description</th>");
-            for (var i = 0; i < untap.beer_list.items.length; i++) {
-                $("#beer-list-body").append("<tr><td><img src=" + untap.beer_list.items[i].beer.beer_label + "></td><td>" + untap.beer_list.items[i].beer.beer_name + "</td><td>" + untap.beer_list.items[i].beer.beer_style + "</td><td>"
-                    + untap.beer_list.items[i].beer.beer_description + "</td></tr>");
+            if (untap.beer_list.items.length === 0) {
+                $(".modal-body").append("<h2 style='text-align:center;font-weight:bold'>BEER LIST NOT AVAILABLE</h2>");
+            } else {
+                $(".modal-body").append("<table class='table'><thead><tr id='beer-list-head'></tr></thead><tbody id='beer-list-body'></tbody></table>");
+                $("#beer-list-head").append("<th scope='col'></th><th scope='col'>Beer Name</th><th scope='col'>Style</th><th scope='col'>Description</th>");
+                for (var i = 0; i < untap.beer_list.items.length; i++) {
+                    $("#beer-list-body").append("<tr><td><img src=" + untap.beer_list.items[i].beer.beer_label + "></td><td>" + untap.beer_list.items[i].beer.beer_name + "</td><td>" + untap.beer_list.items[i].beer.beer_style + "</td><td>"
+                        + untap.beer_list.items[i].beer.beer_description + "</td></tr>");
+                }
             }
             $("#exampleModalLabel").text(untap.brewery_name);
             $("#exampleModal").modal();
